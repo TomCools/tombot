@@ -12,8 +12,10 @@ public class VertxStarter extends AbstractVerticle {
         Vertx.vertx().deployVerticle(VertxStarter.class.getName());
     }
 
+
     @Override
     public void start() throws Exception {
+        vertx.deployVerticle(MessengerConnector.class.getName());
         super.start();
 
         vertx.createHttpServer()
