@@ -14,8 +14,10 @@ public class VertxStarter extends AbstractVerticle {
         super.start();
 
         vertx.createHttpServer()
-                .requestHandler(r -> r.bodyHandler(b ->
-                    r.response().end(b)
+                .requestHandler(r -> r.bodyHandler(b -> {
+                            String stringBody = b.toString();
+                            r.response().end("From Vertx: " + stringBody);
+                        }
                 ))
                 .listen(9999);
     }
