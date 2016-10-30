@@ -2,6 +2,8 @@ package be.tomcools.tombot;
 
 import be.tomcools.tombot.model.*;
 import be.tomcools.tombot.model.settings.GreetingSetting;
+import be.tomcools.tombot.model.settings.SettingConstants;
+import be.tomcools.tombot.model.settings.StartedButton;
 import com.google.gson.Gson;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
@@ -35,6 +37,9 @@ public class VertxStarter extends AbstractVerticle {
                 .greeting("Hi {{user_first_name}}, welcome to TomBot.").build();
 
         vertx.eventBus().send(EventBusConstants.CHANGE_SETTINGS, new Gson().toJson(setting));
+
+        StartedButton startButton = new StartedButton();
+        vertx.eventBus().send(EventBusConstants.CHANGE_SETTINGS, new Gson().toJson(startButton));
     }
 
     public void requestHandler(HttpServerRequest r) {
@@ -69,11 +74,23 @@ public class VertxStarter extends AbstractVerticle {
             } else if (entryMessage.isDelivery()) {
                 System.out.println(entryMessage.getDelivery().getSeq() + " delivered");
             } else if (entryMessage.isPostback()) {
+                if (SettingConstants.GET_STARTED.equalsIgnoreCase(entryMessage.getPostback().getPayload())) {
+                    handleGettingStarted(entryMessage);
+                }
                 System.out.println("POSTBACK :-)");
             } else if (entryMessage.isReadConfirmation()) {
                 System.out.println("ReadConfirmation");
             }
         }
+    }
+
+    private void handleGettingStarted(FacebookMessageMessaging message) {
+        FacebookReplyMessage replyMessage = FacebookReplyMessage.builder()
+                .recipient(message.getSender())
+                .message(FacebookMessageContent.builder().text("You clicked getting started! :-)").build())
+                .build();
+
+        vertx.eventBus().send(EventBusConstants.SEND_MESSAGE, new Gson().toJson(replyMessage));
     }
 
     private void handleFacebookMessage(FacebookMessageMessaging message) {
