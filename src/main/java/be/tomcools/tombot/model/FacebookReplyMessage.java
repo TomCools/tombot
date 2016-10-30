@@ -1,10 +1,16 @@
 package be.tomcools.tombot.model;
 
-/**
- * Created by tomco on 30/10/2016.
- */
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class FacebookReplyMessage {
-    public FacebookIdentifier recipient;
-    public FacebookMessageContent message;
-    public String sender_action;
+    private FacebookIdentifier recipient;
+    private FacebookMessageContent message;
+    private String sender_action;
 }

@@ -33,14 +33,14 @@ public class FacebookMessageTest {
 
         FacebookMessage facebookMessage = new Gson().fromJson(example, FacebookMessage.class);
 
-        assertThat(facebookMessage.object, is("page"));
+        assertThat(facebookMessage.getObject(), is("page"));
 
-        FacebookMessageEntry entry = facebookMessage.entry.get(0);
-        assertThat(entry.id, is("PAGE_ID"));
-        assertThat(entry.time, is(1458692752478L));
+        FacebookMessageEntry entry = facebookMessage.getEntry().get(0);
+        assertThat(entry.getId(), is("PAGE_ID"));
+        assertThat(entry.getTime(), is(1458692752478L));
 
-        FacebookMessageMessaging messaging = entry.messaging.get(0);
-        assertThat(messaging.sender.id, is("USER_ID"));
-        assertThat(messaging.recipient.id, is("PAGE_ID"));
+        FacebookMessageMessaging messaging = entry.getMessaging().get(0);
+        assertThat(messaging.getSender().getId(), is("USER_ID"));
+        assertThat(messaging.getRecipient().getId(), is("PAGE_ID"));
     }
 }

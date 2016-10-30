@@ -3,7 +3,6 @@ package be.tomcools.tombot;
 import be.tomcools.tombot.model.*;
 import com.google.gson.Gson;
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
@@ -45,17 +44,17 @@ public class VertxStarter extends AbstractVerticle {
     }
 
     private void handleMessage(FacebookMessage message) {
-        for (FacebookMessageEntry entry : message.entry) {
+        for (FacebookMessageEntry entry : message.getEntry()) {
             handleFacebookMessageEntry(entry);
         }
     }
 
     private void handleFacebookMessageEntry(FacebookMessageEntry entry) {
-        for (FacebookMessageMessaging entryMessage : entry.messaging) {
+        for (FacebookMessageMessaging entryMessage : entry.getMessaging()) {
             if (entryMessage.isMessage()) {
                 handleFacebookMessage(entryMessage);
             } else if (entryMessage.isDelivery()) {
-                System.out.println(entryMessage.delivery.seq + " delivered");
+                System.out.println(entryMessage.getDelivery().getSeq() + " delivered");
             } else if (entryMessage.isPostback()) {
                 System.out.println("POSTBACK :-)");
             } else if (entryMessage.isReadConfirmation()) {
@@ -65,22 +64,11 @@ public class VertxStarter extends AbstractVerticle {
     }
 
     private void handleFacebookMessage(FacebookMessageMessaging message) {
-        sendSeenReply(message);
-        vertx.setTimer(3000, id -> {
-            FacebookReplyMessage replyMessage = new FacebookReplyMessage();
-            replyMessage.recipient = message.sender;
-            replyMessage.message = new FacebookMessageContent();
-            replyMessage.message.text = "Hello from the bot :-)";
+        FacebookReplyMessage replyMessage = FacebookReplyMessage.builder()
+                .recipient(message.getSender())
+                .message(FacebookMessageContent.builder().text("Hello from the bot :-)").build())
+                .build();
 
-            vertx.eventBus().send(MessengerConnector.SEND_MESSAGE, new Gson().toJson(replyMessage));
-        });
-    }
-
-    private void sendSeenReply(FacebookMessageMessaging message) {
-        FacebookReplyMessage replyMessage = new FacebookReplyMessage();
-        replyMessage.recipient = message.sender;
-        replyMessage.sender_action = SENDER_ACTION.MARK_SEEN.toString();
-
-        vertx.eventBus().send(MessengerConnector.SEND_MESSAGE, new Gson().toJson(replyMessage));
+        vertx.eventBus().send(EventBusConstants.SEND_MESSAGE, new Gson().toJson(replyMessage));
     }
 }

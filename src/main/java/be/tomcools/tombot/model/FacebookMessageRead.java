@@ -1,9 +1,15 @@
 package be.tomcools.tombot.model;
 
-/**
- * Created by tomco on 30/10/2016.
- */
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class FacebookMessageRead {
-    Long watermark;
-    Long seq;
+    private Long watermark;
+    private Long seq;
 }

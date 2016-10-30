@@ -1,13 +1,22 @@
 package be.tomcools.tombot.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class FacebookMessageMessaging {
-    public FacebookIdentifier sender;
-    public FacebookIdentifier recipient;
-    public Long timestamp;
-    public FacebookMessageContent message;
-    public FacebookMessageDelivery delivery;
-    public FacebookMessageRead read;
-    public FacebookMessagePostback postback;
+    private FacebookIdentifier sender;
+    private FacebookIdentifier recipient;
+    private Long timestamp;
+    private FacebookMessageContent message;
+    private FacebookMessageDelivery delivery;
+    private FacebookMessageRead read;
+    private FacebookMessagePostback postback;
 
     public boolean isMessage() {
         return message != null;

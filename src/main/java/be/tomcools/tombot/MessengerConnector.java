@@ -1,5 +1,6 @@
 package be.tomcools.tombot;
 
+import be.tomcools.tombot.model.EventBusConstants;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.http.HttpClient;
@@ -11,7 +12,6 @@ import java.util.Map;
 
 public class MessengerConnector extends AbstractVerticle {
 
-    public static String SEND_MESSAGE = "SEND_MESSAGE";
     private HttpClient client;
     private String token;
 
@@ -33,7 +33,7 @@ public class MessengerConnector extends AbstractVerticle {
                 .setDefaultHost("graph.facebook.com");
         client = vertx.createHttpClient(options);
 
-        vertx.eventBus().consumer(SEND_MESSAGE, this::handleMessage);
+        vertx.eventBus().consumer(EventBusConstants.SEND_MESSAGE, this::handleMessage);
     }
 
     public void handleMessage(Message<String> tMessage) {
