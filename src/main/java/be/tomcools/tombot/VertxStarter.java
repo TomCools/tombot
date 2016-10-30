@@ -66,18 +66,14 @@ public class VertxStarter extends AbstractVerticle {
 
     private void handleFacebookMessage(FacebookMessageMessaging message) {
         sendSeenReply(message);
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        vertx.setTimer(3000, id -> {
+            FacebookReplyMessage replyMessage = new FacebookReplyMessage();
+            replyMessage.recipient = message.sender;
+            replyMessage.message = new FacebookMessageContent();
+            replyMessage.message.text = "Hello from the bot :-)";
 
-        FacebookReplyMessage replyMessage = new FacebookReplyMessage();
-        replyMessage.recipient = message.sender;
-        replyMessage.message = new FacebookMessageContent();
-        replyMessage.message.text = "Hello from the bot :-)";
-
-        vertx.eventBus().send(MessengerConnector.SEND_MESSAGE, new Gson().toJson(replyMessage));
+            vertx.eventBus().send(MessengerConnector.SEND_MESSAGE, new Gson().toJson(replyMessage));
+        });
     }
 
     private void sendSeenReply(FacebookMessageMessaging message) {
