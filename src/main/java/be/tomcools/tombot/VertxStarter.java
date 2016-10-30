@@ -1,7 +1,10 @@
 package be.tomcools.tombot;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.http.HttpServerResponse;
 
 public class VertxStarter extends AbstractVerticle {
 
@@ -14,11 +17,23 @@ public class VertxStarter extends AbstractVerticle {
         super.start();
 
         vertx.createHttpServer()
-                .requestHandler(r -> r.bodyHandler(b -> {
-                            String stringBody = b.toString();
-                            r.response().end("From Vertx: " + stringBody);
-                        }
-                ))
+                .requestHandler(this::requestHandler)
                 .listen(9999);
+    }
+
+    public void requestHandler(HttpServerRequest r) {
+        String mode = r.getParam("hub.mode");
+        String token = r.getParam("hub.verify_token");
+        String challenge = r.getParam("hub.challenge");
+
+        if (mode != null && "subscribe".equalsIgnoreCase(mode)) {
+            HttpServerResponse response = r.response();
+            response.setStatusCode(200)
+                    .end(challenge);
+        } else {
+            r.response()
+                    .setStatusCode(403)
+                    .end("Failed verification");
+        }
     }
 }
