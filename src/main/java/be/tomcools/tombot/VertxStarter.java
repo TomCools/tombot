@@ -1,6 +1,5 @@
 package be.tomcools.tombot;
 
-import be.tomcools.tombot.model.FacebookIdentifier;
 import be.tomcools.tombot.model.FacebookMessage;
 import be.tomcools.tombot.model.FacebookMessageContent;
 import be.tomcools.tombot.model.FacebookReplyMessage;
@@ -38,12 +37,10 @@ public class VertxStarter extends AbstractVerticle {
                     .end(challenge);
         } else {
             r.bodyHandler(b -> {
- //               FacebookMessage message = new Gson().fromJson(b.toJsonObject().toString(), FacebookMessage.class);
+                FacebookMessage message = new Gson().fromJson(b.toJsonObject().toString(), FacebookMessage.class);
 
                 FacebookReplyMessage replyMessage = new FacebookReplyMessage();
-                //replyMessage.recipient = message.entry.get(0).messaging.get(0).sender;
-                replyMessage.recipient = new FacebookIdentifier();
-                replyMessage.recipient.id = "EXAMPLE";
+                replyMessage.recipient = message.entry.get(0).messaging.get(0).sender;
                 replyMessage.message = new FacebookMessageContent();
                 replyMessage.message.text = "Hello from the bot :-)";
 
