@@ -45,6 +45,7 @@ public class VertxStarter extends AbstractVerticle {
                 replyMessage.message.text = "Hello from the bot :-)";
 
                 vertx.eventBus().send(MessengerConnector.SEND_MESSAGE, new Gson().toJson(replyMessage));
+                r.response().end();
             });
         }
     }
