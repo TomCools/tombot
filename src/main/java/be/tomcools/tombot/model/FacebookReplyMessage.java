@@ -6,4 +6,5 @@ package be.tomcools.tombot.model;
 public class FacebookReplyMessage {
     public FacebookIdentifier recipient;
     public FacebookMessageContent message;
+    public String sender_action;
 }
