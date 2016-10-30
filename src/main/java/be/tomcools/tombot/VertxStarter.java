@@ -1,6 +1,7 @@
 package be.tomcools.tombot;
 
 import be.tomcools.tombot.model.*;
+import be.tomcools.tombot.model.settings.GreetingSetting;
 import com.google.gson.Gson;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
@@ -16,12 +17,24 @@ public class VertxStarter extends AbstractVerticle {
 
     @Override
     public void start() throws Exception {
-        vertx.deployVerticle(MessengerConnector.class.getName());
-        super.start();
+        vertx.deployVerticle(MessengerConnector.class.getName(), r -> {
+            if (r.succeeded()) {
+                pushSettings();
+            } else {
+                throw new IllegalStateException("MessengerConnector could not be started");
+            }
+        });
 
         vertx.createHttpServer()
                 .requestHandler(this::requestHandler)
                 .listen(9999);
+    }
+
+    private void pushSettings() {
+        GreetingSetting setting = GreetingSetting.builder()
+                .greeting("Hi {{user_first_name}}, welcome to TomBot.").build();
+
+        vertx.eventBus().send(EventBusConstants.CHANGE_SETTINGS, new Gson().toJson(setting));
     }
 
     public void requestHandler(HttpServerRequest r) {
