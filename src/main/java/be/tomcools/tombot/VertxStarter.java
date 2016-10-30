@@ -1,5 +1,9 @@
 package be.tomcools.tombot;
 
+import be.tomcools.tombot.model.FacebookMessage;
+import be.tomcools.tombot.model.FacebookMessageContent;
+import be.tomcools.tombot.model.FacebookReplyMessage;
+import com.google.gson.Gson;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -27,15 +31,21 @@ public class VertxStarter extends AbstractVerticle {
         String mode = r.getParam("hub.mode");
         String token = r.getParam("hub.verify_token");
         String challenge = r.getParam("hub.challenge");
-
         if (mode != null && "subscribe".equalsIgnoreCase(mode)) {
             HttpServerResponse response = r.response();
             response.setStatusCode(200)
                     .end(challenge);
         } else {
-            r.response()
-                    .setStatusCode(403)
-                    .end("Failed verification");
+            r.bodyHandler(b -> {
+                FacebookMessage message = new Gson().fromJson(b.toJsonObject().toString(), FacebookMessage.class);
+
+                FacebookReplyMessage replyMessage = new FacebookReplyMessage();
+                replyMessage.recipient = message.entry.get(0).messaging.get(0).sender;
+                replyMessage.message = new FacebookMessageContent();
+                replyMessage.message.text = "Hello from the bot :-)";
+
+                vertx.eventBus().send(MessengerConnector.SEND_MESSAGE, new Gson().toJson(replyMessage));
+            });
         }
     }
 }

@@ -1,8 +1,9 @@
 package be.tomcools.tombot.model;
 
-public class FacebookMessageMessaging {
-    public FacebookIdentifier sender;
+/**
+ * Created by tomco on 30/10/2016.
+ */
+public class FacebookReplyMessage {
     public FacebookIdentifier recipient;
-    public Long timestamp;
     public FacebookMessageContent message;
 }
