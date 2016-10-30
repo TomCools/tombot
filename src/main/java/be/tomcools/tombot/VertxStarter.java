@@ -1,8 +1,6 @@
 package be.tomcools.tombot;
 
-import be.tomcools.tombot.model.FacebookMessage;
-import be.tomcools.tombot.model.FacebookMessageContent;
-import be.tomcools.tombot.model.FacebookReplyMessage;
+import be.tomcools.tombot.model.*;
 import com.google.gson.Gson;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Handler;
@@ -39,14 +37,39 @@ public class VertxStarter extends AbstractVerticle {
             r.bodyHandler(b -> {
                 FacebookMessage message = new Gson().fromJson(b.toJsonObject().toString(), FacebookMessage.class);
 
-                FacebookReplyMessage replyMessage = new FacebookReplyMessage();
-                replyMessage.recipient = message.entry.get(0).messaging.get(0).sender;
-                replyMessage.message = new FacebookMessageContent();
-                replyMessage.message.text = "Hello from the bot :-)";
+                handleMessage(message);
 
-                vertx.eventBus().send(MessengerConnector.SEND_MESSAGE, new Gson().toJson(replyMessage));
                 r.response().end();
             });
         }
+    }
+
+    private void handleMessage(FacebookMessage message) {
+        for (FacebookMessageEntry entry : message.entry) {
+            handleFacebookMessageEntry(entry);
+        }
+    }
+
+    private void handleFacebookMessageEntry(FacebookMessageEntry entry) {
+        for (FacebookMessageMessaging entryMessage : entry.messaging) {
+            if (entryMessage.isMessage()) {
+                handleFacebookMessage(entryMessage);
+            } else if (entryMessage.isDelivery()) {
+                System.out.println(entryMessage.delivery.seq + " delivered");
+            } else if (entryMessage.isPostback()) {
+                System.out.println("POSTBACK :-)");
+            } else if (entryMessage.isReadConfirmation()) {
+                System.out.println("ReadConfirmation");
+            }
+        }
+    }
+
+    private void handleFacebookMessage(FacebookMessageMessaging message) {
+        FacebookReplyMessage replyMessage = new FacebookReplyMessage();
+        replyMessage.recipient = message.sender;
+        replyMessage.message = new FacebookMessageContent();
+        replyMessage.message.text = "Hello from the bot :-)";
+
+        vertx.eventBus().send(MessengerConnector.SEND_MESSAGE, new Gson().toJson(replyMessage));
     }
 }
