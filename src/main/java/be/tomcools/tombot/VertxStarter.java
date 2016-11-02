@@ -9,6 +9,7 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.http.ServerWebSocket;
 
 public class VertxStarter extends AbstractVerticle {
 
@@ -29,7 +30,14 @@ public class VertxStarter extends AbstractVerticle {
 
         vertx.createHttpServer()
                 .requestHandler(this::requestHandler)
+                .websocketHandler(this::websocketHandler)
                 .listen(9999);
+    }
+
+    private void websocketHandler(ServerWebSocket serverWebSocket) {
+        serverWebSocket.frameHandler(f ->
+                serverWebSocket.writeFinalTextFrame(f.textData())
+        );
     }
 
     private void pushSettings() {
