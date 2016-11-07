@@ -1,5 +1,6 @@
 package be.tomcools.tombot;
 
+import be.tomcools.tombot.endpoints.CommandHandler;
 import be.tomcools.tombot.endpoints.FacebookWebhook;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.ext.web.Router;
@@ -11,6 +12,7 @@ public class HttpVerticle extends AbstractVerticle {
     public void start() throws Exception {
         Router router = Router.router(vertx);
         router.route("/webhook").handler(FacebookWebhook.builder().eventbus(vertx.eventBus()).build()::webhookRequestHandler);
+        router.route("/command/*").handler(CommandHandler.builder().eventbus(vertx.eventBus()).build()::handleRequest);
         router.route("/*").handler(this::isAlive);
 
         Integer portNumber = config().getInteger("http.port", 9999);
