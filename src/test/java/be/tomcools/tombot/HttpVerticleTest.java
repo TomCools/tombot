@@ -1,34 +1,39 @@
 package be.tomcools.tombot;
 
 import io.restassured.RestAssured;
+import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
-import org.junit.Before;
+import io.vertx.core.json.JsonObject;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
-/**
- * Created by tomco on 7/11/2016.
- */
 public class HttpVerticleTest {
+    private static Integer TESTPORT = 8080;
+    private static String PATH = "http://localhost:" + TESTPORT;
+
     @BeforeClass
     public static void startServer() {
-        Vertx.vertx().deployVerticle(HttpVerticle.class.getName());
+        JsonObject o = new JsonObject();
+        o.put("http.port", TESTPORT);
+        DeploymentOptions options = new DeploymentOptions();
+        options.setConfig(o);
+        Vertx.vertx().deployVerticle(HttpVerticle.class.getName(), options);
     }
 
     @Test
     public void serverCanReturnIsLive() {
-        String result = RestAssured.get("http://localhost:9999").asString();
+        String result = RestAssured.get(PATH).asString();
 
         assertThat(result, is("I'm Alive!"));
     }
 
     @Test
     public void serverDoesNotReturnIsAliveOnTheWebhookEndpoint() {
-        String result = RestAssured.get("http://localhost:9999").asString();
+        String result = RestAssured.get(PATH).asString();
 
         assertThat(result, is(not("I'm Alive")));
     }
