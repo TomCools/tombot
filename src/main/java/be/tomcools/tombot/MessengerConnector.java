@@ -2,10 +2,6 @@ package be.tomcools.tombot;
 
 import be.tomcools.tombot.model.EventBusConstants;
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
-import io.vertx.core.MultiMap;
-import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
@@ -48,53 +44,7 @@ public class MessengerConnector extends AbstractVerticle {
         T userId = tMessage.body();
         String url = "/v2.6/" + tMessage.body() + "?fields=first_name,last_name,profile_pic,locale,timezone,gender&" + accesstoken;
         client.get(url, response -> {
-            this.handleMessage(new Message<String>() {
-                @Override
-                public String address() {
-                    return null;
-                }
-
-                @Override
-                public MultiMap headers() {
-                    return null;
-                }
-
-                @Override
-                public String body() {
-                    return "Getting your profile data: " + response.statusMessage();
-                }
-
-                @Override
-                public String replyAddress() {
-                    return null;
-                }
-
-                @Override
-                public void reply(Object o) {
-
-                }
-
-                @Override
-                public <R> void reply(Object o, Handler<AsyncResult<Message<R>>> handler) {
-
-                }
-
-                @Override
-                public void reply(Object o, DeliveryOptions deliveryOptions) {
-
-                }
-
-                @Override
-                public <R> void reply(Object o, DeliveryOptions deliveryOptions, Handler<AsyncResult<Message<R>>> handler) {
-
-                }
-
-                @Override
-                public void fail(int i, String s) {
-
-                }
-            });
-            tMessage.reply("Test");
+            response.bodyHandler(b -> tMessage.reply(b.toString()));
         }).putHeader("content-type", "application/json").end();
     }
 

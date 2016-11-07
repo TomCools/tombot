@@ -2,6 +2,7 @@ package be.tomcools.tombot.endpoints;
 
 import be.tomcools.tombot.model.*;
 import be.tomcools.tombot.model.settings.SettingConstants;
+import be.tomcools.tombot.model.user.UserDetails;
 import com.google.gson.Gson;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
@@ -44,20 +45,26 @@ public class FacebookWebhook {
         for (FacebookMessageMessaging entryMessage : entry.getMessaging()) {
             FacebookIdentifier sender = entryMessage.getSender();
 
-            new UserProfileCollector(eventbus).findUserProfile(sender);
+            eventbus.send(EventBusConstants.PROFILE_DETAILS, sender.getId(), response -> {
+                if (response.succeeded()) {
+                    UserDetails userDetails = new Gson().fromJson(response.result().body().toString(), UserDetails.class);
 
-            if (entryMessage.isMessage()) {
-                handleFacebookMessage(entryMessage);
-            } else if (entryMessage.isDelivery()) {
-                System.out.println(entryMessage.getDelivery().getSeq() + " delivered");
-            } else if (entryMessage.isPostback()) {
-                if (SettingConstants.GET_STARTED.equalsIgnoreCase(entryMessage.getPostback().getPayload())) {
-                    handleGettingStarted(entryMessage);
+                    if (entryMessage.isMessage()) {
+                        handleFacebookMessage(entryMessage, userDetails);
+                    } else if (entryMessage.isDelivery()) {
+                        System.out.println(entryMessage.getDelivery().getSeq() + " delivered");
+                    } else if (entryMessage.isPostback()) {
+                        if (SettingConstants.GET_STARTED.equalsIgnoreCase(entryMessage.getPostback().getPayload())) {
+                            handleGettingStarted(entryMessage);
+                        }
+                        System.out.println("POSTBACK :-)");
+                    } else if (entryMessage.isReadConfirmation()) {
+                        System.out.println("ReadConfirmation");
+                    }
                 }
-                System.out.println("POSTBACK :-)");
-            } else if (entryMessage.isReadConfirmation()) {
-                System.out.println("ReadConfirmation");
-            }
+            });
+
+
         }
     }
 
@@ -70,10 +77,10 @@ public class FacebookWebhook {
         eventbus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
     }
 
-    private void handleFacebookMessage(FacebookMessageMessaging message) {
+    private void handleFacebookMessage(FacebookMessageMessaging message, UserDetails userDetails) {
         FacebookReplyMessage replyMessage = FacebookReplyMessage.builder()
                 .recipient(message.getSender())
-                .message(FacebookMessageContent.builder().text("Hello from the bot :-)").build())
+                .message(FacebookMessageContent.builder().text("Hello " + userDetails.getFirst_name() + "." + GSON.toJson(userDetails)).build())
                 .build();
 
         eventbus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
