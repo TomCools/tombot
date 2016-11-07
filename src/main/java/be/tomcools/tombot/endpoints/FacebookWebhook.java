@@ -80,7 +80,7 @@ public class FacebookWebhook {
     private void handleFacebookMessage(FacebookMessageMessaging message, UserDetails userDetails) {
         FacebookReplyMessage replyMessage = FacebookReplyMessage.builder()
                 .recipient(message.getSender())
-                .message(FacebookMessageContent.builder().text("Hello " + userDetails.getFirst_name() + "." + GSON.toJson(userDetails)).build())
+                .message(FacebookMessageContent.builder().text("Hello " + (userDetails.isMale() ? "Sir " : "Melady ") + userDetails.getFirst_name() + "." + GSON.toJson(userDetails)).build())
                 .build();
 
         eventbus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));

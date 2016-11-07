@@ -14,4 +14,8 @@ public class UserDetails {
     private String profile_picture;
     private String locale;
     private String gender;
+
+    public boolean isMale() {
+        return "MALE".equalsIgnoreCase(gender);
+    }
 }

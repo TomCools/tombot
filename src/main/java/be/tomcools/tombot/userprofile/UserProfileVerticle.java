@@ -27,18 +27,14 @@ public class UserProfileVerticle extends AbstractVerticle {
                 retrieveProfileFromAPI(userIdMessage);
             }
         });
-
-
     }
 
     private <T> void retrieveProfileFromAPI(Message<T> userIdMessage) {
         vertx.eventBus().send(EventBusConstants.PROFILE_DETAILS_FACEBOOK, userIdMessage.body(), response -> {
             if (response.succeeded()) {
                 System.out.println("Succesfully retrieved from API");
-
                 Object body = response.result().body();
                 userIdMessage.reply(body);
-
                 saveInRedis((String) userIdMessage.body(), (String) body);
             } else {
                 System.out.println("Call to Profile Details on facebook failed.");
