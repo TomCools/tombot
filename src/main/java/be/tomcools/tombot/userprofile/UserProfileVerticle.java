@@ -3,6 +3,7 @@ package be.tomcools.tombot.userprofile;
 import be.tomcools.tombot.model.EventBusConstants;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.Message;
+import io.vertx.core.json.JsonArray;
 import io.vertx.redis.RedisClient;
 import io.vertx.redis.RedisOptions;
 
@@ -16,6 +17,18 @@ public class UserProfileVerticle extends AbstractVerticle {
         options.setHost("tomcools.cloudapp.net");
         redis = RedisClient.create(vertx, options);
         vertx.eventBus().consumer(EventBusConstants.PROFILE_DETAILS, this::handleProfileDetailsMessage);
+        vertx.eventBus().consumer(EventBusConstants.GET_ALL_CLIENT_IDS, this::retrieveAllClientIds);
+    }
+
+    private <T> void retrieveAllClientIds(Message<T> tMessage) {
+        redis.keys("tombot:*", keys -> {
+            if (keys.succeeded()) {
+                JsonArray result = keys.result();
+                tMessage.reply(result.toString());
+            } else {
+                tMessage.fail(1, "Couldn't retrieve Client ID's from Redis");
+            }
+        });
     }
 
     private <T> void handleProfileDetailsMessage(Message<T> userIdMessage) {
