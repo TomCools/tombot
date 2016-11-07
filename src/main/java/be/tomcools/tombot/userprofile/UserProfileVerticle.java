@@ -19,11 +19,9 @@ public class UserProfileVerticle extends AbstractVerticle {
     }
 
     private <T> void handleProfileDetailsMessage(Message<T> userIdMessage) {
-        //Change so it first looks up in local database
-
         redis.get("tombot:" + userIdMessage.body().toString(), res -> {
-            if (res.succeeded()) {
-                System.out.println("Succesfully retrieved from REDIS! " + res.toString());
+            if (res.succeeded() && res.result() != null) {
+                System.out.println("Succesfully retrieved from REDIS!" + res.result());
                 userIdMessage.reply(res.result());
             } else {
                 retrieveProfileFromAPI(userIdMessage);
@@ -49,7 +47,7 @@ public class UserProfileVerticle extends AbstractVerticle {
     }
 
     private <T> void saveInRedis(String userId, String body) {
-        redis.set(userId, body, result -> {
+        redis.set("tombot:" + userId, body, result -> {
             if (!result.succeeded()) {
                 System.err.println("Could not save in redis :(");
             }
