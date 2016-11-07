@@ -4,8 +4,8 @@ import be.tomcools.tombot.model.EventBusConstants;
 import be.tomcools.tombot.model.FacebookIdentifier;
 import be.tomcools.tombot.model.FacebookMessageContent;
 import be.tomcools.tombot.model.FacebookReplyMessage;
+import com.google.gson.Gson;
 import io.vertx.core.eventbus.EventBus;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
 import lombok.Builder;
@@ -42,7 +42,7 @@ public class CommandHandler {
                                     .build())
                             .build();
 
-                    eventbus.send(EventBusConstants.SEND_MESSAGE, Json.encode(replyMessage));
+                    eventbus.send(EventBusConstants.SEND_MESSAGE, new Gson().toJson(replyMessage));
                 }
 
             }
