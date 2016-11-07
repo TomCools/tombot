@@ -42,6 +42,10 @@ public class FacebookWebhook {
 
     private void handleFacebookMessageEntry(FacebookMessageEntry entry) {
         for (FacebookMessageMessaging entryMessage : entry.getMessaging()) {
+            FacebookIdentifier sender = entryMessage.getSender();
+
+            new UserProfileCollector(eventbus).findUserProfile(sender);
+
             if (entryMessage.isMessage()) {
                 handleFacebookMessage(entryMessage);
             } else if (entryMessage.isDelivery()) {
