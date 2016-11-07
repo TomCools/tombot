@@ -12,6 +12,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class HttpVerticleTest {
     private static Integer TESTPORT = 8080;
@@ -39,4 +40,5 @@ public class HttpVerticleTest {
 
         assertThat(result, is(not("I'm Alive")));
     }
+
 }

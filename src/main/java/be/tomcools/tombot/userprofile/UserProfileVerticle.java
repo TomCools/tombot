@@ -12,9 +12,9 @@ public class UserProfileVerticle extends AbstractVerticle {
 
     @Override
     public void start() throws Exception {
-        redis = RedisClient.create(vertx, new RedisOptions());
-
-
+        RedisOptions options = new RedisOptions();
+        options.setHost("tomcools.cloudapp.net");
+        redis = RedisClient.create(vertx, options);
         vertx.eventBus().consumer(EventBusConstants.PROFILE_DETAILS, this::handleProfileDetailsMessage);
     }
 
