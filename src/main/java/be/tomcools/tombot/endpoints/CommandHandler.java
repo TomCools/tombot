@@ -34,7 +34,7 @@ public class CommandHandler {
 
         eventbus.send(EventBusConstants.GET_ALL_CLIENT_IDS, "", handler -> {
             if (handler.succeeded()) {
-                JsonArray result = Json.decodeValue(handler.result().body().toString(), JsonArray.class);
+                JsonArray result = new JsonArray(handler.result().body().toString());
                 for (Object i : result) {
                     FacebookReplyMessage replyMessage = FacebookReplyMessage.builder()
                             .recipient(FacebookIdentifier.builder().id(i.toString()).build())
