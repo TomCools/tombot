@@ -48,7 +48,7 @@ public class FacebookWebhook {
             eventbus.send(EventBusConstants.PROFILE_DETAILS, sender.getId(), response -> {
                 if (response.succeeded()) {
                     UserDetails userDetails = new Gson().fromJson(response.result().body().toString(), UserDetails.class);
-
+                    System.out.println("Got User Details: " + userDetails);
                     if (entryMessage.isMessage()) {
                         handleFacebookMessage(entryMessage, userDetails);
                     } else if (entryMessage.isDelivery()) {
