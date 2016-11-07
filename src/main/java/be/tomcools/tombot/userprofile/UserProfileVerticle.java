@@ -24,7 +24,7 @@ public class UserProfileVerticle extends AbstractVerticle {
         redis.keys("tombot:*", keys -> {
             if (keys.succeeded()) {
                 JsonArray result = keys.result();
-                tMessage.reply(result.toString());
+                tMessage.reply(result.toString().replace("tombot:", ""));
             } else {
                 tMessage.fail(1, "Couldn't retrieve Client ID's from Redis");
             }
