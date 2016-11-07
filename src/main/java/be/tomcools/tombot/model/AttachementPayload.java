@@ -5,13 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Created by tomco on 7/11/2016.
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FacebookMessageContent {
-    private String mid;
-    private Long seq;
-    private String text;
-    private FacebookMessageAttachment attachment;
+public class AttachementPayload {
+    private String url;
 }
