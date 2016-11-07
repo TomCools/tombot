@@ -3,6 +3,7 @@ package be.tomcools.tombot;
 import be.tomcools.tombot.model.EventBusConstants;
 import be.tomcools.tombot.model.settings.GreetingSetting;
 import be.tomcools.tombot.model.settings.StartedButton;
+import be.tomcools.tombot.userprofile.UserProfileVerticle;
 import com.google.gson.Gson;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
@@ -23,6 +24,7 @@ public class VertxStarter extends AbstractVerticle {
             }
         });
         vertx.deployVerticle(HttpVerticle.class.getName());
+        vertx.deployVerticle(UserProfileVerticle.class.getName());
     }
 
     private void pushSettings() {

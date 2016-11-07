@@ -37,12 +37,12 @@ public class MessengerConnector extends AbstractVerticle {
 
         vertx.eventBus().consumer(EventBusConstants.SEND_MESSAGE, this::handleMessage);
         vertx.eventBus().consumer(EventBusConstants.CHANGE_SETTINGS, this::handleSettingsChange);
-        vertx.eventBus().consumer(EventBusConstants.PROFILE_DETAILS, this::handleProfileDetails);
+        vertx.eventBus().consumer(EventBusConstants.PROFILE_DETAILS_FACEBOOK, this::handleProfileDetails);
     }
 
     private <T> void handleProfileDetails(Message<T> tMessage) {
         T userId = tMessage.body();
-        String url = "/v2.6/" + tMessage.body() + "?fields=first_name,last_name,profile_pic,locale,timezone,gender&" + accesstoken;
+        String url = "/v2.6/" + userId.toString() + "?fields=first_name,last_name,profile_pic,locale,timezone,gender&" + accesstoken;
         client.get(url, response -> {
             response.bodyHandler(b -> tMessage.reply(b.toString()));
         }).putHeader("content-type", "application/json").end();
