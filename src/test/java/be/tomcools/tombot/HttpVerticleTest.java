@@ -4,6 +4,8 @@ import io.restassured.RestAssured;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
+import io.vertx.redis.RedisClient;
+import io.vertx.redis.RedisOptions;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -37,5 +39,4 @@ public class HttpVerticleTest {
 
         assertThat(result, is(not("I'm Alive")));
     }
-
 }
