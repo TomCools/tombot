@@ -5,10 +5,13 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 
 import java.util.Map;
 
 public class MessengerConnector extends AbstractVerticle {
+    private static final Logger LOG = LoggerFactory.getLogger(MessengerConnector.class);
 
     private HttpClient client;
     private String messagesEndpoint;
@@ -62,17 +65,16 @@ public class MessengerConnector extends AbstractVerticle {
     public void handleMessage(Message<String> tMessage) {
         String body = tMessage.body();
         client.post(messagesEndpoint, response -> {
-            System.out.println("Received response with status code " + response.statusCode());
-            System.out.println("Received response with status code " + response.bodyHandler(b -> System.out.println(b.toString())));
-
+            LOG.debug("Received response with status code " + response.statusCode());
+            response.bodyHandler(b -> LOG.debug("Received response with status code " + b.toString()));
         }).putHeader("content-type", "application/json").end(body);
     }
 
     public void handleSettingsChange(Message<String> tMessage) {
         String body = tMessage.body();
         client.post(threadSettingsEndpoint, response -> {
-            System.out.println("Received response with status code " + response.statusCode());
-            System.out.println("Received response with status code " + response.bodyHandler(b -> System.out.println(b.toString())));
+            LOG.debug("Received response with status code " + response.statusCode());
+            response.bodyHandler(b -> LOG.debug("Received response with status code " + b.toString()));
 
         }).putHeader("content-type", "application/json").end(body);
     }

@@ -8,11 +8,15 @@ import be.tomcools.tombot.tools.JSON;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.RoutingContext;
 import lombok.Builder;
 
 @Builder
 public class FacebookWebhook {
+    private static final Logger LOG = LoggerFactory.getLogger(FacebookWebhook.class);
+
     private EventBus eventbus;
 
     public void webhookRequestHandler(RoutingContext route) {
@@ -45,30 +49,27 @@ public class FacebookWebhook {
         for (FacebookMessageMessaging entryMessage : entry.getMessaging()) {
             FacebookIdentifier sender = entryMessage.getSender();
 
-            //eventbus.send(EventBusConstants.PROFILE_DETAILS, sender.getId(), response -> {
-            //    if (response.succeeded()) {
-            //
-            //    }
-            //});
-            // UserDetails userDetails = JSON.decodeValue(response.result().body().toString(), UserDetails.class);
-            UserDetails userDetails = UserDetails.builder()
-                    .first_name("Test")
-                    .last_name("Test2")
-                    .gender("MALE")
-                    .build();
-            System.out.println("Got User Details: " + userDetails);
-            if (entryMessage.isMessage()) {
-                handleFacebookMessage(entryMessage, userDetails);
-            } else if (entryMessage.isDelivery()) {
-                System.out.println(entryMessage.getDelivery().getSeq() + " delivered");
-            } else if (entryMessage.isPostback()) {
-                if (SettingConstants.GET_STARTED.equalsIgnoreCase(entryMessage.getPostback().getPayload())) {
-                    handleGettingStarted(entryMessage);
+            eventbus.send(EventBusConstants.PROFILE_DETAILS, sender.getId(), response -> {
+                if (response.succeeded()) {
+                    UserDetails userDetails = JSON.fromJson(response.result().body().toString(), UserDetails.class);
+                    LOG.debug("Got User Details: " + userDetails);
+                    if (entryMessage.isMessage()) {
+                        handleFacebookMessage(entryMessage, userDetails);
+                    } else if (entryMessage.isDelivery()) {
+                        System.out.println(entryMessage.getDelivery().getSeq() + " delivered");
+                    } else if (entryMessage.isPostback()) {
+                        if (SettingConstants.GET_STARTED.equalsIgnoreCase(entryMessage.getPostback().getPayload())) {
+                            handleGettingStarted(entryMessage);
+                        }
+                        LOG.debug("POSTBACK :-)");
+                    } else if (entryMessage.isReadConfirmation()) {
+                        LOG.debug("ReadConfirmation");
+                    }
+                } else {
+                    LOG.error("Couldn't successfully get the Profile Details :-(.");
                 }
-                System.out.println("POSTBACK :-)");
-            } else if (entryMessage.isReadConfirmation()) {
-                System.out.println("ReadConfirmation");
-            }
+            });
+
 
         }
     }

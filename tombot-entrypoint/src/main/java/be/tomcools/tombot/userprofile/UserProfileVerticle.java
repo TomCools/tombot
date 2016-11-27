@@ -4,10 +4,13 @@ import be.tomcools.tombot.model.core.EventBusConstants;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.redis.RedisClient;
 import io.vertx.redis.RedisOptions;
 
 public class UserProfileVerticle extends AbstractVerticle {
+    private static final Logger LOG = LoggerFactory.getLogger(UserProfileVerticle.class);
 
     private RedisClient redis;
 
@@ -34,7 +37,7 @@ public class UserProfileVerticle extends AbstractVerticle {
     private <T> void handleProfileDetailsMessage(Message<T> userIdMessage) {
         redis.get("tombot:" + userIdMessage.body().toString(), res -> {
             if (res.succeeded() && res.result() != null) {
-                System.out.println("Succesfully retrieved from REDIS!" + res.result());
+                LOG.debug("Succesfully retrieved from REDIS!" + res.result());
                 userIdMessage.reply(res.result());
             } else {
                 retrieveProfileFromAPI(userIdMessage);
@@ -45,12 +48,12 @@ public class UserProfileVerticle extends AbstractVerticle {
     private <T> void retrieveProfileFromAPI(Message<T> userIdMessage) {
         vertx.eventBus().send(EventBusConstants.PROFILE_DETAILS_FACEBOOK, userIdMessage.body(), response -> {
             if (response.succeeded()) {
-                System.out.println("Succesfully retrieved from API");
+                LOG.debug("Succesfully retrieved from API");
                 Object body = response.result().body();
                 userIdMessage.reply(body);
                 saveInRedis((String) userIdMessage.body(), (String) body);
             } else {
-                System.out.println("Call to Profile Details on facebook failed.");
+                LOG.error("Call to Profile Details on facebook failed.");
             }
         });
     }
@@ -58,7 +61,9 @@ public class UserProfileVerticle extends AbstractVerticle {
     private <T> void saveInRedis(String userId, String body) {
         redis.set("tombot:" + userId, body, result -> {
             if (!result.succeeded()) {
-                System.err.println("Could not save in redis :(");
+                LOG.error("Could not save in redis :(");
+            } else {
+                LOG.debug("Successfully saved in Redis. userID: {}" + userId);
             }
         });
     }
