@@ -8,6 +8,7 @@ import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
+import io.vertx.ext.auth.User;
 import io.vertx.ext.web.RoutingContext;
 import lombok.Builder;
 
@@ -45,25 +46,30 @@ public class FacebookWebhook {
         for (FacebookMessageMessaging entryMessage : entry.getMessaging()) {
             FacebookIdentifier sender = entryMessage.getSender();
 
-            eventbus.send(EventBusConstants.PROFILE_DETAILS, sender.getId(), response -> {
-                if (response.succeeded()) {
-                    UserDetails userDetails = Json.decodeValue(response.result().body().toString(), UserDetails.class);
-                    System.out.println("Got User Details: " + userDetails);
-                    if (entryMessage.isMessage()) {
-                        handleFacebookMessage(entryMessage, userDetails);
-                    } else if (entryMessage.isDelivery()) {
-                        System.out.println(entryMessage.getDelivery().getSeq() + " delivered");
-                    } else if (entryMessage.isPostback()) {
-                        if (SettingConstants.GET_STARTED.equalsIgnoreCase(entryMessage.getPostback().getPayload())) {
-                            handleGettingStarted(entryMessage);
-                        }
-                        System.out.println("POSTBACK :-)");
-                    } else if (entryMessage.isReadConfirmation()) {
-                        System.out.println("ReadConfirmation");
-                    }
+            //eventbus.send(EventBusConstants.PROFILE_DETAILS, sender.getId(), response -> {
+            //    if (response.succeeded()) {
+            //
+            //    }
+            //});
+           // UserDetails userDetails = Json.decodeValue(response.result().body().toString(), UserDetails.class);
+            UserDetails userDetails = UserDetails.builder()
+                    .first_name("Test")
+                    .last_name("Test2")
+                    .gender("MALE")
+                    .build();
+            System.out.println("Got User Details: " + userDetails);
+            if (entryMessage.isMessage()) {
+                handleFacebookMessage(entryMessage, userDetails);
+            } else if (entryMessage.isDelivery()) {
+                System.out.println(entryMessage.getDelivery().getSeq() + " delivered");
+            } else if (entryMessage.isPostback()) {
+                if (SettingConstants.GET_STARTED.equalsIgnoreCase(entryMessage.getPostback().getPayload())) {
+                    handleGettingStarted(entryMessage);
                 }
-            });
-
+                System.out.println("POSTBACK :-)");
+            } else if (entryMessage.isReadConfirmation()) {
+                System.out.println("ReadConfirmation");
+            }
 
         }
     }
