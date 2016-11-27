@@ -4,7 +4,6 @@ import be.tomcools.tombot.model.core.EventBusConstants;
 import be.tomcools.tombot.model.core.UserDetails;
 import be.tomcools.tombot.model.facebook.*;
 import be.tomcools.tombot.model.facebook.settings.SettingConstants;
-import com.google.gson.Gson;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
@@ -48,7 +47,7 @@ public class FacebookWebhook {
 
             eventbus.send(EventBusConstants.PROFILE_DETAILS, sender.getId(), response -> {
                 if (response.succeeded()) {
-                    UserDetails userDetails = new Gson().fromJson(response.result().body().toString(), UserDetails.class);
+                    UserDetails userDetails = Json.decodeValue(response.result().body().toString(), UserDetails.class);
                     System.out.println("Got User Details: " + userDetails);
                     if (entryMessage.isMessage()) {
                         handleFacebookMessage(entryMessage, userDetails);
