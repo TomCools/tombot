@@ -4,11 +4,10 @@ import be.tomcools.tombot.model.core.EventBusConstants;
 import be.tomcools.tombot.model.core.UserDetails;
 import be.tomcools.tombot.model.facebook.*;
 import be.tomcools.tombot.model.facebook.settings.SettingConstants;
+import be.tomcools.tombot.tools.JSON;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.json.Json;
-import io.vertx.ext.auth.User;
 import io.vertx.ext.web.RoutingContext;
 import lombok.Builder;
 
@@ -27,7 +26,7 @@ public class FacebookWebhook {
                     .end(challenge);
         } else {
             r.bodyHandler(b -> {
-                FacebookMessage message = Json.decodeValue(b.toString(), FacebookMessage.class);
+                FacebookMessage message = JSON.fromJson(b.toString(), FacebookMessage.class);
 
                 handleMessage(message);
 
@@ -51,7 +50,7 @@ public class FacebookWebhook {
             //
             //    }
             //});
-           // UserDetails userDetails = Json.decodeValue(response.result().body().toString(), UserDetails.class);
+            // UserDetails userDetails = JSON.decodeValue(response.result().body().toString(), UserDetails.class);
             UserDetails userDetails = UserDetails.builder()
                     .first_name("Test")
                     .last_name("Test2")
@@ -80,7 +79,7 @@ public class FacebookWebhook {
                 .message(FacebookMessageContent.builder().text("You clicked getting started! :-)").build())
                 .build();
 
-        eventbus.send(EventBusConstants.SEND_MESSAGE, Json.encode(replyMessage));
+        eventbus.send(EventBusConstants.SEND_MESSAGE, JSON.toJson(replyMessage));
     }
 
     private void handleFacebookMessage(FacebookMessageMessaging message, UserDetails userDetails) {
@@ -91,7 +90,7 @@ public class FacebookWebhook {
                         .build())
                 .build();
 
-        eventbus.send(EventBusConstants.SEND_MESSAGE, Json.encode(replyMessage));
+        eventbus.send(EventBusConstants.SEND_MESSAGE, JSON.toJson(replyMessage));
 
         FacebookReplyMessage consolidationMessage = FacebookReplyMessage.builder()
                 .recipient(message.getSender())
@@ -102,6 +101,6 @@ public class FacebookWebhook {
                         .build())
                 .build();
 
-        eventbus.send(EventBusConstants.SEND_MESSAGE, Json.encode(consolidationMessage));
+        eventbus.send(EventBusConstants.SEND_MESSAGE, JSON.toJson(consolidationMessage));
     }
 }

@@ -3,6 +3,7 @@ package be.tomcools.tombot;
 import be.tomcools.tombot.model.core.EventBusConstants;
 import be.tomcools.tombot.model.facebook.settings.GreetingSetting;
 import be.tomcools.tombot.model.facebook.settings.StartedButton;
+import be.tomcools.tombot.tools.JSON;
 import be.tomcools.tombot.userprofile.UserProfileVerticle;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
@@ -31,9 +32,9 @@ public class VertxStarter extends AbstractVerticle {
         GreetingSetting setting = GreetingSetting.builder()
                 .greeting("Hi {{user_first_name}}, welcome to TomBot.").build();
 
-        vertx.eventBus().send(EventBusConstants.CHANGE_SETTINGS, Json.encode(setting));
+        vertx.eventBus().send(EventBusConstants.CHANGE_SETTINGS, JSON.toJson(setting));
 
         StartedButton startButton = new StartedButton();
-        vertx.eventBus().send(EventBusConstants.CHANGE_SETTINGS, Json.encode(startButton));
+        vertx.eventBus().send(EventBusConstants.CHANGE_SETTINGS, JSON.toJson(startButton));
     }
 }
