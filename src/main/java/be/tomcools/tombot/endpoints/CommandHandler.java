@@ -49,3 +49,6 @@ public class CommandHandler {
         });
     }
 }
+
+
+//http://tomcools.cloudapp.net:9999/command?action=%22test%27&message=%22SomeSpamMessage%22

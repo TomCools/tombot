@@ -63,8 +63,6 @@ public class FacebookWebhook {
                     }
                 }
             });
-
-
         }
     }
 
@@ -86,16 +84,5 @@ public class FacebookWebhook {
                 .build();
 
         eventbus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
-
-        FacebookReplyMessage consolidationMessage = FacebookReplyMessage.builder()
-                .recipient(message.getSender())
-                .message(FacebookMessageContent.builder()
-                        .attachment(FacebookMessageAttachment.builder().type("image")
-                                .payload(AttachementPayload.builder().url("https://scontent-amt2-1.xx.fbcdn.net/v/t1.0-9/14937422_1818596438353291_2136991225262339188_n.jpg?oh=37e02fe9ac8d010bf19d0bfda9b1bb21&oe=58912E55").build())
-                                .build())
-                        .build())
-                .build();
-
-        eventbus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(consolidationMessage));
     }
 }
