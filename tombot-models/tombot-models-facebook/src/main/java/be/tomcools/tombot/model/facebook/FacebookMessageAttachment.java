@@ -1,4 +1,4 @@
-package be.tomcools.tombot.model;
+package be.tomcools.tombot.model.facebook;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
