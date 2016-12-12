@@ -1,7 +1,7 @@
 FROM java:8
 
 ENV FACEBOOK_TOKEN=DUMMY
-ADD target/tombot-1.0-SNAPSHOT-fat.jar tombot.jar
+ADD tombot-entrypoint/target/tombot-fat.jar tombot.jar
 
 CMD java -jar tombot.jar
 
