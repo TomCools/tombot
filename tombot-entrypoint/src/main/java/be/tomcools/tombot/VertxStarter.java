@@ -5,9 +5,9 @@ import be.tomcools.tombot.model.facebook.settings.GreetingSetting;
 import be.tomcools.tombot.model.facebook.settings.StartedButton;
 import be.tomcools.tombot.tools.JSON;
 import be.tomcools.tombot.userprofile.UserProfileVerticle;
+import be.tomcools.tombot.witai.WitAiConnector;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.Json;
 
 public class VertxStarter extends AbstractVerticle {
 
@@ -26,6 +26,7 @@ public class VertxStarter extends AbstractVerticle {
         });
         vertx.deployVerticle(HttpVerticle.class.getName());
         vertx.deployVerticle(UserProfileVerticle.class.getName());
+        vertx.deployVerticle(WitAiConnector.class.getName());
     }
 
     private void pushSettings() {

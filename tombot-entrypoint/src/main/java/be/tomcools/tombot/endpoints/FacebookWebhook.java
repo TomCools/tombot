@@ -84,6 +84,16 @@ public class FacebookWebhook {
     }
 
     private void handleFacebookMessage(FacebookMessageMessaging message, UserDetails userDetails) {
+
+        eventbus.send(EventBusConstants.WIT_AI_ANALYSE_SENTENCE, message.getMessage().getText(), h -> {
+            FacebookReplyMessage replyMessage = FacebookReplyMessage.builder()
+                    .recipient(message.getSender())
+                    .message(FacebookMessageContent.builder().text(h.result().body().toString()).build())
+                    .build();
+
+            eventbus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
+        });
+
         FacebookReplyMessage replyMessage = FacebookReplyMessage.builder()
                 .recipient(message.getSender())
                 .message(FacebookMessageContent.builder().text("Hello " + (userDetails.isMale() ? "Sir " : "Melady ") + userDetails.getFirst_name() + "." +
