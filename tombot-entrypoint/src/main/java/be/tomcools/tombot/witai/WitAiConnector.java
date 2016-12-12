@@ -8,6 +8,8 @@ import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 
 public class WitAiConnector extends AbstractVerticle {
@@ -24,16 +26,15 @@ public class WitAiConnector extends AbstractVerticle {
         accesstoken = "Bearer " + witToken;
 
         //TODO make configurable
-        witGetMessageEndpoint = "/message?v=20161102";
 
+        witGetMessageEndpoint = "https://api.wit.ai/message?v=20161112";
 
         HttpClientOptions options = new HttpClientOptions()
                 .setLogActivity(true)
                 .setKeepAlive(true)
                 .setTrustAll(true)
                 .setSsl(true)
-                .setDefaultPort(443)
-                .setDefaultHost("api.wit.ai");
+                .setDefaultPort(443);
         client = vertx.createHttpClient(options);
 
         vertx.eventBus().consumer(EventBusConstants.WIT_AI_ANALYSE_SENTENCE, this::handleWitGetRequest);
@@ -41,11 +42,17 @@ public class WitAiConnector extends AbstractVerticle {
 
     private <T> void handleWitGetRequest(Message<T> tMessage) {
         T messageBody = tMessage.body();
-        String url = witGetMessageEndpoint + "&q=" + messageBody.toString();
-        client.get(url, response -> {
-            response.bodyHandler(b -> tMessage.reply(b.toString()));
-        }).putHeader("content-type", "application/json")
-                .putHeader("Authorization", accesstoken).end();
+        try {
+            String encodedMessage = URLEncoder.encode(messageBody.toString(), "UTF-8");
+            String url = witGetMessageEndpoint + "&q=" + encodedMessage;
+            client.getAbs(url, response -> {
+                response.bodyHandler(b -> tMessage.reply(b.toString()));
+            }).putHeader("Accept", "application/json").putHeader("Authorization", accesstoken).end();
+
+        } catch (UnsupportedEncodingException e) {
+            tMessage.fail(500, e.getMessage());
+        }
+
     }
 
     private String findWitToken() {
