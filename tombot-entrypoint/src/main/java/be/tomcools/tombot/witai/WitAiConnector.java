@@ -59,14 +59,19 @@ public class WitAiConnector extends AbstractVerticle {
     //TODO resilience and cleaner implementation
     private String handleWitResponse(String response) {
         LOG.debug(response);
-        JsonObject jsonObject = Json.decodeValue(response, JsonObject.class);
-        JsonObject entities = jsonObject.getJsonObject("entities");
+        try {
+            JsonObject jsonObject = Json.decodeValue(response, JsonObject.class);
+            JsonObject entities = jsonObject.getJsonObject("entities");
 
-        if (entities.containsKey("tombot_capability_check")) {
-            return Json.encode(NlpResponse.builder().intent(Intents.CAPABILITY_CHECK).build());
-        } else {
-            return Json.encode(NlpResponse.builder().intent(Intents.UNKNOWN).build());
+            if (entities.containsKey("tombot_capability_check")) {
+                return Json.encode(NlpResponse.builder().intent(Intents.CAPABILITY_CHECK).build());
+            } else {
+                return Json.encode(NlpResponse.builder().intent(Intents.UNKNOWN).build());
+            }
+        } catch (Exception ex) {
+            return "Exception! ;(";
         }
+
     }
 
     private String findWitToken() {
