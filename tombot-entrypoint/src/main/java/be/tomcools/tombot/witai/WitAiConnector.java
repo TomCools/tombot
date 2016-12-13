@@ -5,6 +5,8 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
+import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
@@ -46,13 +48,24 @@ public class WitAiConnector extends AbstractVerticle {
             String encodedMessage = URLEncoder.encode(messageBody.toString(), "UTF-8");
             String url = witGetMessageEndpoint + "&q=" + encodedMessage;
             client.getAbs(url, response -> {
-                response.bodyHandler(b -> tMessage.reply(b.toString()));
+                response.bodyHandler(b -> tMessage.reply(handleWitResponse(b.toString())));
             }).putHeader("Accept", "application/json").putHeader("Authorization", accesstoken).end();
 
         } catch (UnsupportedEncodingException e) {
             tMessage.fail(500, e.getMessage());
         }
+    }
 
+    //TODO resilience and cleaner implementation
+    private String handleWitResponse(String response) {
+        JsonObject jsonObject = Json.decodeValue(response, JsonObject.class);
+        JsonObject entities = jsonObject.getJsonObject("entities");
+
+        if (entities.containsKey("tombot_capability_check")) {
+            return Json.encode(NlpResponse.builder().intent(Intents.CAPABILITY_CHECK).build());
+        } else {
+            return Json.encode(NlpResponse.builder().intent(Intents.UNKNOWN).build());
+        }
     }
 
     private String findWitToken() {
