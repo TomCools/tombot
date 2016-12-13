@@ -60,7 +60,7 @@ public class WitAiConnector extends AbstractVerticle {
     private String handleWitResponse(String response) {
         LOG.debug(response);
         try {
-            JsonObject jsonObject = Json.decodeValue(response, JsonObject.class);
+            JsonObject jsonObject = new JsonObject(response);
             JsonObject entities = jsonObject.getJsonObject("entities");
 
             if (entities.containsKey("tombot_capability_check")) {
