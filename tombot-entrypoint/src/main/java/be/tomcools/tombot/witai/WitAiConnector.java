@@ -58,6 +58,7 @@ public class WitAiConnector extends AbstractVerticle {
 
     //TODO resilience and cleaner implementation
     private String handleWitResponse(String response) {
+        LOG.debug(response);
         JsonObject jsonObject = Json.decodeValue(response, JsonObject.class);
         JsonObject entities = jsonObject.getJsonObject("entities");
 

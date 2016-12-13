@@ -86,12 +86,17 @@ public class FacebookWebhook {
     private void handleFacebookMessage(FacebookMessageMessaging message, UserDetails userDetails) {
 
         eventbus.send(EventBusConstants.WIT_AI_ANALYSE_SENTENCE, message.getMessage().getText(), h -> {
-            FacebookReplyMessage replyMessage = FacebookReplyMessage.builder()
-                    .recipient(message.getSender())
-                    .message(FacebookMessageContent.builder().text(h.result().body().toString()).build())
-                    .build();
+            if (h.succeeded()) {
+                FacebookReplyMessage replyMessage = FacebookReplyMessage.builder()
+                        .recipient(message.getSender())
+                        .message(FacebookMessageContent.builder().text(h.result().body().toString()).build())
+                        .build();
 
-            eventbus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
+                eventbus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
+            } else {
+                LOG.error("Failed to get response from NLP", h.cause());
+            }
+
         });
 
         FacebookReplyMessage replyMessage = FacebookReplyMessage.builder()
