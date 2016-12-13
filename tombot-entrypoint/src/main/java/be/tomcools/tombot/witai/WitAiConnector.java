@@ -69,7 +69,8 @@ public class WitAiConnector extends AbstractVerticle {
                 return Json.encode(NlpResponse.builder().intent(Intents.UNKNOWN).build());
             }
         } catch (Exception ex) {
-            return "Exception! ;(";
+            LOG.error(ex);
+            return "Exception! ;(" + ex.getMessage();
         }
 
     }
