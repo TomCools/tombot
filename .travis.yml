@@ -1,0 +1,24 @@
+env:
+  global:
+  - COMMIT=${TRAVIS_COMMIT::8}
+  - REPO=tomcools/tombot
+  - CGO_ENABLED=0
+  - GOOS=linux
+  - GOARCH=amd64
+
+sudo: required
+language: java
+
+services:
+  - docker
+
+script:
+  -
+  - export TAG="latest"
+  - docker build -t tombot -t $REPO:$TAG -f Dockerfile .
+
+after_success:
+  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+  - docker tag $REPO:$COMMIT $REPO:$TAG
+  - docker tag $REPO:$COMMIT $REPO:$TRAVIS_BUILD_NUMBER
+  - docker push $REPO

@@ -19,7 +19,7 @@ public class HttpVerticle extends AbstractVerticle {
         router.route("/command/*").handler(CommandHandler.builder().eventbus(vertx.eventBus()).build()::handleRequest);
         router.route("/*").handler(this::isAlive);
 
-        Integer portNumber = config().getInteger("http.port", 9999);
+        Integer portNumber = config().getInteger("http.port", 80);
 
         vertx.createHttpServer()
                 .requestHandler(router::accept)
