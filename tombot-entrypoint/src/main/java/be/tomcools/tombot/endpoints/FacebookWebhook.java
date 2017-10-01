@@ -26,12 +26,13 @@ public class FacebookWebhook {
         String challenge = r.getParam("hub.challenge");
         if (mode != null && "subscribe".equalsIgnoreCase(mode)) {
             HttpServerResponse response = r.response();
+            LOG.info("Subscribe mode");
             response.setStatusCode(200)
                     .end(challenge);
         } else {
             r.bodyHandler(b -> {
                 FacebookMessage message = GSON.fromJson(b.toJsonObject().toString(), FacebookMessage.class);
-
+                LOG.info("Got Message: {}",message);
                 handleMessage(message);
 
                 r.response().end();

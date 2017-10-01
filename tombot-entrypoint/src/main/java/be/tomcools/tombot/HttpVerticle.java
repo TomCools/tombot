@@ -24,7 +24,7 @@ public class HttpVerticle extends AbstractVerticle {
         vertx.createHttpServer()
                 .requestHandler(router::accept)
                 .listen(portNumber);
-        LOG.debug("Hi :-) Bot has started on port: " + portNumber);
+        LOG.info("Hi :-) Bot has started on port: " + portNumber);
     }
 
     private void isAlive(RoutingContext routingContext) {

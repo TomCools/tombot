@@ -65,7 +65,7 @@ public class MessengerConnector extends AbstractVerticle {
     public void handleMessage(Message<String> tMessage) {
         String body = tMessage.body();
         client.post(messagesEndpoint, response -> {
-            LOG.debug("Received response with status code " + response.statusCode());
+            LOG.info("Received response with status code " + response.statusCode());
             response.bodyHandler(b -> LOG.debug("Received response with status code " + b.toString()));
         }).putHeader("content-type", "application/json").end(body);
     }
@@ -73,7 +73,7 @@ public class MessengerConnector extends AbstractVerticle {
     public void handleSettingsChange(Message<String> tMessage) {
         String body = tMessage.body();
         client.post(threadSettingsEndpoint, response -> {
-            LOG.debug("Received response with status code " + response.statusCode());
+            LOG.info("Received response with status code " + response.statusCode());
             response.bodyHandler(b -> LOG.debug("Received response with status code " + b.toString()));
 
         }).putHeader("content-type", "application/json").end(body);
