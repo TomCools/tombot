@@ -2,7 +2,6 @@ package be.tomcools.tombot;
 
 import be.tomcools.tombot.command.CommandHandler;
 import be.tomcools.tombot.endpoints.FacebookWebhook;
-import be.tomcools.tombot.userprofile.UserProfileVerticle;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -15,6 +14,7 @@ public class HttpVerticle extends AbstractVerticle {
     @Override
     public void start() throws Exception {
         Router router = Router.router(vertx);
+        router.exceptionHandler(throwable -> System.err.println(throwable.getCause() + ":" + throwable.getMessage()));
         router.route("/webhook").handler(FacebookWebhook.builder().eventbus(vertx.eventBus()).build()::webhookRequestHandler);
         router.route("/command/*").handler(CommandHandler.builder().eventbus(vertx.eventBus()).build()::handleRequest);
         router.route("/*").handler(this::isAlive);
@@ -24,7 +24,7 @@ public class HttpVerticle extends AbstractVerticle {
         vertx.createHttpServer()
                 .requestHandler(router::accept)
                 .listen(portNumber);
-       LOG.debug("Hi :-) Bot has started on port: " + portNumber);
+        LOG.debug("Hi :-) Bot has started on port: " + portNumber);
     }
 
     private void isAlive(RoutingContext routingContext) {
