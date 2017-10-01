@@ -41,8 +41,7 @@ public class FacebookWebhook {
 
     private void handleMessage(FacebookMessage message) {
         for (FacebookMessageEntry entry : message.getEntry()) {
-            if (entry != null)
-                handleFacebookMessageEntry(entry);
+            handleFacebookMessageEntry(entry);
         }
     }
 
