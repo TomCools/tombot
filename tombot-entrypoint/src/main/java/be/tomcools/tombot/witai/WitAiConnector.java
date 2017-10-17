@@ -66,6 +66,8 @@ public class WitAiConnector extends AbstractVerticle {
 
             if (entities.containsKey("tombot_capability_check")) {
                 return Json.encode(NlpResponse.builder().intent(Intents.CAPABILITY_CHECK).build());
+            } else if (entities.containsKey("tombot_set_reminder")) {
+                return Json.encode(NlpResponse.builder().intent(Intents.SET_REMINDER).build());
             } else {
                 return Json.encode(NlpResponse.builder().intent(Intents.UNKNOWN).build());
             }
