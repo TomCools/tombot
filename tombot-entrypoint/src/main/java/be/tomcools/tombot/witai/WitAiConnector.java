@@ -36,7 +36,8 @@ public class WitAiConnector extends AbstractVerticle {
                 .setKeepAlive(true)
                 .setTrustAll(true)
                 .setSsl(true)
-                .setDefaultPort(443);
+                .setDefaultPort(443)
+                .setConnectTimeout(1500);
         client = vertx.createHttpClient(options);
 
         vertx.eventBus().consumer(EventBusConstants.WIT_AI_ANALYSE_SENTENCE, this::handleWitGetRequest);
