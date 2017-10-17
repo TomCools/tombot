@@ -96,6 +96,12 @@ public class FacebookWebhook {
                 eventbus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
             } else {
                 LOG.error("Failed to get response from NLP", h.cause());
+                FacebookReplyMessage replyMessage = FacebookReplyMessage.builder()
+                        .recipient(message.getSender())
+                        .message(FacebookMessageContent.builder().text("I failed to understand what you want :(. My WIT-ty friend was not available.")
+                                .build())
+                        .build();
+                eventbus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
             }
 
         });
