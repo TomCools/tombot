@@ -69,7 +69,7 @@ public class WitAiConnector extends AbstractVerticle {
             } else if (entities.containsKey("tombot_set_reminder")) {
                 return Json.encode(NlpResponse.builder().intent(Intents.SET_REMINDER).build());
             } else {
-                return Json.encode(NlpResponse.builder().intent(Intents.UNKNOWN).build());
+                return Json.encode(NlpResponse.builder().intent(Intents.UNKNOWN).fullReply(response).build());
             }
         } catch (Exception ex) {
             LOG.error(ex);
