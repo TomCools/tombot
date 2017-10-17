@@ -1,5 +1,6 @@
 package be.tomcools.tombot.endpoints;
 
+import be.tomcools.tombot.FacebookUtils;
 import be.tomcools.tombot.model.core.EventBusConstants;
 import be.tomcools.tombot.model.core.UserDetails;
 import be.tomcools.tombot.model.facebook.*;
@@ -34,7 +35,6 @@ public class FacebookWebhook {
                 FacebookMessage message = GSON.fromJson(b.toJsonObject().toString(), FacebookMessage.class);
                 LOG.info("Got Message: {}",message);
                 handleMessage(message);
-
                 r.response().end();
             });
         }
@@ -48,19 +48,18 @@ public class FacebookWebhook {
 
     private void handleFacebookMessageEntry(FacebookMessageEntry entry) {
         for (FacebookMessageMessaging entryMessage : entry.getMessaging()) {
-            FacebookIdentifier sender = entryMessage.getSender();
-
-            eventbus.send(EventBusConstants.PROFILE_DETAILS, sender.getId(), response -> {
+            eventbus.send(EventBusConstants.PROFILE_DETAILS, entryMessage.getSender().getId(), response -> {
                 if (response.succeeded()) {
                     UserDetails userDetails = GSON.fromJson(response.result().body().toString(), UserDetails.class);
+                    FacebookContext context = new FacebookContext(eventbus, entryMessage, userDetails);
                     LOG.debug("Got User Details: " + userDetails);
                     if (entryMessage.isMessage()) {
-                        handleFacebookMessage(entryMessage, userDetails);
+                        handleFacebookMessage(context);
                     } else if (entryMessage.isDelivery()) {
                         System.out.println(entryMessage.getDelivery().getSeq() + " delivered");
                     } else if (entryMessage.isPostback()) {
                         if (SettingConstants.GET_STARTED.equalsIgnoreCase(entryMessage.getPostback().getPayload())) {
-                            handleGettingStarted(entryMessage);
+                            handleGettingStarted(context);
                         }
                         LOG.debug("POSTBACK :-)");
                     } else if (entryMessage.isReadConfirmation()) {
@@ -70,49 +69,21 @@ public class FacebookWebhook {
                     LOG.error("Couldn't successfully get the Profile Details :-(.");
                 }
             });
-
-
         }
     }
 
-    private void handleGettingStarted(FacebookMessageMessaging message) {
-        FacebookReplyMessage replyMessage = FacebookReplyMessage.builder()
-                .recipient(message.getSender())
-                .message(FacebookMessageContent.builder().text("You clicked getting started! :-)").build())
-                .build();
-
-        eventbus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
+    private void handleGettingStarted(FacebookContext context) {
+        context.sendReply("You clicked getting started! :-)");
     }
 
-    private void handleFacebookMessage(FacebookMessageMessaging message, UserDetails userDetails) {
-
-        eventbus.send(EventBusConstants.WIT_AI_ANALYSE_SENTENCE, message.getMessage().getText(), h -> {
+    private void handleFacebookMessage(FacebookContext context) {
+        eventbus.send(EventBusConstants.WIT_AI_ANALYSE_SENTENCE, context.getMessageText(), h -> {
             if (h.succeeded()) {
-                FacebookReplyMessage replyMessage = FacebookReplyMessage.builder()
-                        .recipient(message.getSender())
-                        .message(FacebookMessageContent.builder().text(h.result().body().toString()).build())
-                        .build();
-
-                eventbus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
+                context.sendReply("DEBUG: " + h.result().body().toString());
             } else {
                 LOG.error("Failed to get response from NLP", h.cause());
-                FacebookReplyMessage replyMessage = FacebookReplyMessage.builder()
-                        .recipient(message.getSender())
-                        .message(FacebookMessageContent.builder().text("I failed to understand what you want :(. My WIT-ty friend was not available.")
-                                .build())
-                        .build();
-                eventbus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
+                context.sendReply("I failed to understand what you want :(. My WIT-ty friend was not available.");
             }
-
         });
-
-        FacebookReplyMessage replyMessage = FacebookReplyMessage.builder()
-                .recipient(message.getSender())
-                .message(FacebookMessageContent.builder().text("Hello " + (userDetails.isMale() ? "Sir " : "Melady ") + userDetails.getFirst_name() + "." +
-                        " I am truely sorry, but I am not able to anything yet except greet you. I hope this changes soon :-(.")
-                        .build())
-                .build();
-
-        eventbus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
     }
 }
