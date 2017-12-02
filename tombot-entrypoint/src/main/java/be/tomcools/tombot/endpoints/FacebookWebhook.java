@@ -45,17 +45,17 @@ public class FacebookWebhook {
     private void handleFacebookMessageMessaging(FacebookMessageMessaging entryMessage) {
         FacebookContext context = new FacebookContext(eventbus, entryMessage);
 
-        if (entryMessage.isMessage()) {
+        if (context.isMessage()) {
             context.senderAction(SenderAction.TYPING_ON);
             handleFacebookMessage(context);
-        } else if (entryMessage.isDelivery()) {
+        } else if (context.isDelivery()) {
             System.out.println(entryMessage.getDelivery().getSeq() + " delivered");
-        } else if (entryMessage.isPostback()) {
+        } else if (context.isPostback()) {
             if (SettingConstants.GET_STARTED.equalsIgnoreCase(entryMessage.getPostback().getPayload())) {
                 handleGettingStarted(context);
             }
             LOG.debug("POSTBACK :-)");
-        } else if (entryMessage.isReadConfirmation()) {
+        } else if (context.isReadConfirmation()) {
             LOG.debug("ReadConfirmation");
         }
     }

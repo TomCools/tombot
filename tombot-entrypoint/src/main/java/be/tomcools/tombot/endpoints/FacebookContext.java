@@ -23,6 +23,22 @@ public class FacebookContext {
         return message.getMessage().getText();
     }
 
+    public boolean isMessage() {
+        return message.isMessage();
+    }
+
+    public boolean isDelivery() {
+        return message.isDelivery();
+    }
+
+    public boolean isReadConfirmation() {
+        return message.isReadConfirmation();
+    }
+
+    public boolean isPostback() {
+        return message.isPostback();
+    }
+
     public void sendReply(String textReply) {
         FacebookReplyMessage replyMessage = FacebookUtils.replyMessage(message.getSender(), textReply);
         eventBus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
