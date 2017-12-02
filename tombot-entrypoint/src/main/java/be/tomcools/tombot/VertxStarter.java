@@ -25,8 +25,8 @@ public class VertxStarter extends AbstractVerticle {
             }
         });
         vertx.deployVerticle(HttpVerticle.class.getName());
-        vertx.deployVerticle(UserProfileVerticle.class.getName());
-        vertx.deployVerticle(WitAiConnector.class.getName());
+        //vertx.deployVerticle(UserProfileVerticle.class.getName());
+        //vertx.deployVerticle(WitAiConnector.class.getName());
     }
 
     private void pushSettings() {
