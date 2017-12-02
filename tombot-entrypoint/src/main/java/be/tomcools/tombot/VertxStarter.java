@@ -18,26 +18,10 @@ public class VertxStarter extends AbstractVerticle {
 
     @Override
     public void start() throws Exception {
-       /* vertx.deployVerticle(MessengerConnector.class.getName(), r -> {
-            if (r.succeeded()) {
-                pushSettings();
-            } else {
-                throw new IllegalStateException("MessengerConnector could not be started");
-            }
-        });*/
-       // vertx.deployVerticle(HttpVerticle.class.getName());
+        vertx.deployVerticle(MessengerConnector.class.getName());
+        vertx.deployVerticle(HttpVerticle.class.getName());
         vertx.deployVerticle(VeloData.class.getName());
         //vertx.deployVerticle(UserProfileVerticle.class.getName());
         //vertx.deployVerticle(WitAiConnector.class.getName());
-    }
-
-    private void pushSettings() {
-        GreetingSetting setting = GreetingSetting.builder()
-                .greeting("Hi {{user_first_name}}, welcome to TomBot.").build();
-
-        vertx.eventBus().send(EventBusConstants.CHANGE_SETTINGS, JSON.toJson(setting));
-
-        StartedButton startButton = new StartedButton();
-        vertx.eventBus().send(EventBusConstants.CHANGE_SETTINGS, JSON.toJson(startButton));
     }
 }
