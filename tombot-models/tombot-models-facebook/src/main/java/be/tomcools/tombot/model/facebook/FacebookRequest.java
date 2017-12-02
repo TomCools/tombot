@@ -18,8 +18,8 @@ public class FacebookRequest {
     }
 
     public void handleBody(Handler<Buffer> handler) {
-        r.bodyHandler(handler);
         this.respondToRequest();
+        r.bodyHandler(handler);
     }
 
     public void respondToRequest() {
