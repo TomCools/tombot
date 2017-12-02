@@ -45,14 +45,8 @@ public class FacebookWebhook {
     private void handleFacebookMessageMessaging(FacebookMessageMessaging entryMessage) {
         FacebookContext context = new FacebookContext(eventbus, entryMessage);
 
-        context.senderAction(SenderAction.TYPING_ON);
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         if (entryMessage.isMessage()) {
+            context.senderAction(SenderAction.TYPING_ON);
             handleFacebookMessage(context);
         } else if (entryMessage.isDelivery()) {
             System.out.println(entryMessage.getDelivery().getSeq() + " delivered");
