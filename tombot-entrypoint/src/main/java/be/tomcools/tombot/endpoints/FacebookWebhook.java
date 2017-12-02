@@ -2,6 +2,8 @@ package be.tomcools.tombot.endpoints;
 
 import be.tomcools.tombot.model.facebook.*;
 import be.tomcools.tombot.model.facebook.settings.SettingConstants;
+import be.tomcools.tombot.velo.VeloData;
+import be.tomcools.tombot.velo.VeloStation;
 import com.google.gson.Gson;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
@@ -9,6 +11,8 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.RoutingContext;
 import lombok.Builder;
+
+import java.util.List;
 
 @Builder
 public class FacebookWebhook {
@@ -66,5 +70,29 @@ public class FacebookWebhook {
 
     private void handleFacebookMessage(FacebookContext context) {
         context.sendReply("Replying to you... hopefully in a nice way.");
+        context.sendReply("Some analytics for now, while we continue building on this.");
+
+        context.sendReply(buildVeloAnalytics());
+    }
+
+    private String buildVeloAnalytics() {
+        List<VeloStation> stations = VeloData.stations;
+
+        long openStations = stations.stream()
+                .map(VeloStation::isOpen)
+                .count();
+        long amountOfBikes = stations.stream()
+                .mapToInt(VeloStation::getAvailableBikes)
+                .sum();
+        long openStationsWith0Bikes = stations.stream()
+                .filter(VeloStation::isOpen)
+                .filter(veloStation -> veloStation.getAvailableBikes() == 0)
+                .count();
+
+        return new StringBuilder().append("There are a total of ").append(stations.size()).append(" stations in Antwerp.").append(System.lineSeparator())
+                .append(openStations).append(" of those stations are open, ").append(stations.size() - openStations).append(" are closed.").append(System.lineSeparator())
+                .append("A total of ").append(amountOfBikes).append(" bikes are available at stations").append(System.lineSeparator())
+                .append("Even tho Velo does it's best, there are ").append(openStationsWith0Bikes).append(" stations without bikes. :-(")
+                .toString();
     }
 }
