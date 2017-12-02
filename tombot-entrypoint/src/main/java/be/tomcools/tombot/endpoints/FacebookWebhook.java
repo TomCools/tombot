@@ -77,13 +77,14 @@ public class FacebookWebhook {
     }
 
     private void handleFacebookMessage(FacebookContext context) {
-        eventbus.send(EventBusConstants.WIT_AI_ANALYSE_SENTENCE, context.getMessageText(), h -> {
+        context.sendReply("Replying to you... hopefully in a nice way.");
+        /*eventbus.send(EventBusConstants.WIT_AI_ANALYSE_SENTENCE, context.getMessageText(), h -> {
             if (h.succeeded()) {
                 context.sendReply("DEBUG: " + h.result().body().toString());
             } else {
                 LOG.error("Failed to get response from NLP", h.cause());
                 context.sendReply("I failed to understand what you want :(. My WIT-ty friend was not available.");
             }
-        });
+        });*/
     }
 }
