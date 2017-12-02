@@ -61,7 +61,7 @@ public class FacebookWebhook {
     }
 
     private void handleGettingStarted(FacebookContext context) {
-        context.sendReply("You clicked getting started! :-)");
+        context.sendReply("Hi! I am Avelo. I can help you find a bike station for Velo Antwerp!");
     }
 
     private void handleFacebookMessage(FacebookContext context) {
