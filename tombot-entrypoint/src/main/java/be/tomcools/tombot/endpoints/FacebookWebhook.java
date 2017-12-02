@@ -1,14 +1,10 @@
 package be.tomcools.tombot.endpoints;
 
-import be.tomcools.tombot.FacebookUtils;
-import be.tomcools.tombot.model.core.EventBusConstants;
-import be.tomcools.tombot.model.core.UserDetails;
 import be.tomcools.tombot.model.facebook.*;
 import be.tomcools.tombot.model.facebook.settings.SettingConstants;
 import com.google.gson.Gson;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.RoutingContext;
@@ -21,21 +17,15 @@ public class FacebookWebhook {
     private EventBus eventbus;
 
     public void webhookRequestHandler(RoutingContext route) {
-        HttpServerRequest r = route.request();
-        String mode = r.getParam("hub.mode");
-        String token = r.getParam("hub.verify_token");
-        String challenge = r.getParam("hub.challenge");
-        if (mode != null && "subscribe".equalsIgnoreCase(mode)) {
-            HttpServerResponse response = r.response();
-            LOG.info("Subscribe mode");
-            response.setStatusCode(200)
-                    .end(challenge);
+        FacebookRequest request = new FacebookRequest(route.request());
+
+        if (request.isSubscribeRequest()) {
+            request.respondToRequest();
         } else {
-            r.bodyHandler(b -> {
+            request.handleBody(b -> {
                 FacebookMessage message = GSON.fromJson(b.toJsonObject().toString(), FacebookMessage.class);
-                LOG.info("Got Message: {}",message);
+                LOG.info("Got Message: {}", message);
                 handleMessage(message);
-                r.response().end();
             });
         }
     }
@@ -48,27 +38,31 @@ public class FacebookWebhook {
 
     private void handleFacebookMessageEntry(FacebookMessageEntry entry) {
         for (FacebookMessageMessaging entryMessage : entry.getMessaging()) {
-            eventbus.send(EventBusConstants.PROFILE_DETAILS, entryMessage.getSender().getId(), response -> {
-                if (response.succeeded()) {
-                    UserDetails userDetails = GSON.fromJson(response.result().body().toString(), UserDetails.class);
-                    FacebookContext context = new FacebookContext(eventbus, entryMessage, userDetails);
-                    LOG.debug("Got User Details: " + userDetails);
-                    if (entryMessage.isMessage()) {
-                        handleFacebookMessage(context);
-                    } else if (entryMessage.isDelivery()) {
-                        System.out.println(entryMessage.getDelivery().getSeq() + " delivered");
-                    } else if (entryMessage.isPostback()) {
-                        if (SettingConstants.GET_STARTED.equalsIgnoreCase(entryMessage.getPostback().getPayload())) {
-                            handleGettingStarted(context);
-                        }
-                        LOG.debug("POSTBACK :-)");
-                    } else if (entryMessage.isReadConfirmation()) {
-                        LOG.debug("ReadConfirmation");
-                    }
-                } else {
-                    LOG.error("Couldn't successfully get the Profile Details :-(.");
-                }
-            });
+            this.handleFacebookMessageMessaging(entryMessage);
+        }
+    }
+
+    private void handleFacebookMessageMessaging(FacebookMessageMessaging entryMessage) {
+        FacebookContext context = new FacebookContext(eventbus, entryMessage);
+
+        context.senderAction(SenderAction.TYPING_ON);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if (entryMessage.isMessage()) {
+            handleFacebookMessage(context);
+        } else if (entryMessage.isDelivery()) {
+            System.out.println(entryMessage.getDelivery().getSeq() + " delivered");
+        } else if (entryMessage.isPostback()) {
+            if (SettingConstants.GET_STARTED.equalsIgnoreCase(entryMessage.getPostback().getPayload())) {
+                handleGettingStarted(context);
+            }
+            LOG.debug("POSTBACK :-)");
+        } else if (entryMessage.isReadConfirmation()) {
+            LOG.debug("ReadConfirmation");
         }
     }
 
@@ -78,13 +72,5 @@ public class FacebookWebhook {
 
     private void handleFacebookMessage(FacebookContext context) {
         context.sendReply("Replying to you... hopefully in a nice way.");
-        /*eventbus.send(EventBusConstants.WIT_AI_ANALYSE_SENTENCE, context.getMessageText(), h -> {
-            if (h.succeeded()) {
-                context.sendReply("DEBUG: " + h.result().body().toString());
-            } else {
-                LOG.error("Failed to get response from NLP", h.cause());
-                context.sendReply("I failed to understand what you want :(. My WIT-ty friend was not available.");
-            }
-        });*/
     }
 }

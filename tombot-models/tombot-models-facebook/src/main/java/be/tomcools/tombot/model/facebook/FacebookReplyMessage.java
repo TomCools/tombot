@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FacebookReplyMessage {
+    private String messaging_type;
     private FacebookIdentifier recipient;
     private FacebookMessageContent message;
     private String sender_action;

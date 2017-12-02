@@ -26,9 +26,6 @@ public class WitAiConnector extends AbstractVerticle {
         String witToken = findWitToken();
 
         accesstoken = "Bearer " + witToken;
-
-        //TODO make configurable
-
         witGetMessageEndpoint = "https://api.wit.ai/message?v=20161112";
 
         HttpClientOptions options = new HttpClientOptions()
@@ -50,7 +47,10 @@ public class WitAiConnector extends AbstractVerticle {
             String url = witGetMessageEndpoint + "&q=" + encodedMessage;
             client.getAbs(url, response -> {
                 response.bodyHandler(b -> tMessage.reply(handleWitResponse(b.toString())));
-            }).putHeader("Accept", "application/json").putHeader("Authorization", accesstoken).end();
+            }).putHeader("Accept", "application/json")
+                    .putHeader("Authorization", accesstoken)
+                    .setTimeout(1000)
+                    .end();
 
         } catch (UnsupportedEncodingException e) {
             tMessage.fail(500, e.getMessage());
