@@ -1,5 +1,6 @@
 package be.tomcools.tombot.endpoints;
 
+import be.tomcools.tombot.model.core.EventBusConstants;
 import be.tomcools.tombot.model.facebook.*;
 import be.tomcools.tombot.model.facebook.settings.SettingConstants;
 import be.tomcools.tombot.velo.VeloData;
@@ -72,27 +73,34 @@ public class FacebookWebhook {
         context.sendReply("Replying to you... hopefully in a nice way.");
         context.sendReply("Some analytics for now, while we continue building on this.");
 
-        context.sendReply(buildVeloAnalytics());
+        sendVeloAnalytics(context);
     }
 
-    private String buildVeloAnalytics() {
-        List<VeloStation> stations = VeloData.stations;
+    private void sendVeloAnalytics(FacebookContext context) {
+        eventbus.send(EventBusConstants.GET_VELO_DATA, null, handler -> {
+            if(handler.succeeded()) {
+                List<VeloStation> stations = (List<VeloStation>)handler.result().body();
 
-        long openStations = stations.stream()
-                .map(VeloStation::isOpen)
-                .count();
-        long amountOfBikes = stations.stream()
-                .mapToInt(VeloStation::getAvailableBikes)
-                .sum();
-        long openStationsWith0Bikes = stations.stream()
-                .filter(VeloStation::isOpen)
-                .filter(veloStation -> veloStation.getAvailableBikes() == 0)
-                .count();
+                long openStations = stations.stream()
+                        .map(VeloStation::isOpen)
+                        .count();
+                long amountOfBikes = stations.stream()
+                        .mapToInt(VeloStation::getAvailableBikes)
+                        .sum();
+                long openStationsWith0Bikes = stations.stream()
+                        .filter(VeloStation::isOpen)
+                        .filter(veloStation -> veloStation.getAvailableBikes() == 0)
+                        .count();
 
-        return new StringBuilder().append("There are a total of ").append(stations.size()).append(" stations in Antwerp.").append(System.lineSeparator())
-                .append(openStations).append(" of those stations are open, ").append(stations.size() - openStations).append(" are closed.").append(System.lineSeparator())
-                .append("A total of ").append(amountOfBikes).append(" bikes are available at stations").append(System.lineSeparator())
-                .append("Even tho Velo does it's best, there are ").append(openStationsWith0Bikes).append(" stations without bikes. :-(")
-                .toString();
+                String veloAnalytics = new StringBuilder().append("There are a total of ").append(stations.size()).append(" stations in Antwerp.").append(System.lineSeparator())
+                        .append(openStations).append(" of those stations are open, ").append(stations.size() - openStations).append(" are closed.").append(System.lineSeparator())
+                        .append("A total of ").append(amountOfBikes).append(" bikes are available at stations").append(System.lineSeparator())
+                        .append("Even tho Velo does it's best, there are ").append(openStationsWith0Bikes).append(" stations without bikes. :-(")
+                        .toString();
+
+                context.sendReply(veloAnalytics);
+            }
+        });
+
     }
 }

@@ -1,7 +1,9 @@
 package be.tomcools.tombot.velo;
 
+import be.tomcools.tombot.model.core.EventBusConstants;
 import com.google.gson.Gson;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
@@ -18,7 +20,7 @@ public class VeloData extends AbstractVerticle {
     private static final Gson GSON = new Gson();
 
     private HttpClient client;
-    public static List<VeloStation> stations = new ArrayList<>();
+    private static List<VeloStation> stations = new ArrayList<>();
 
     @Override
     public void start() throws Exception {
@@ -31,26 +33,36 @@ public class VeloData extends AbstractVerticle {
                 .setDefaultHost("www.velo-antwerpen.be");
         client = vertx.createHttpClient(options);
 
-        loadData();
-        vertx.setPeriodic(30000, h-> {
-            loadData();
+        vertx.setPeriodic(30000, h -> {
+            clearDataCache();
         });
+
+        vertx.eventBus().consumer(EventBusConstants.GET_VELO_DATA, this::handleMessage);
     }
 
-    private void loadData() {
-        LOG.info("Updating Velo Data");
-        String url = "/availability_map/getJsonObject";
-        client.get(url, response -> {
-            response.bodyHandler(b -> {
-                LOG.info("Loading new Station Data...");
-                try {
-                    List<VeloStation> stationList = Arrays.asList(GSON.fromJson(b.toString(), VeloStation[].class));
-                    stations = stationList.stream().filter(VeloStation::isOpen).collect(Collectors.toList());
-                } catch (Exception ex) {
-                    LOG.error(ex);
-                }
-                LOG.info("Finished loading station data.");
-            });
-        }).end();
+    private void clearDataCache() {
+        stations = new ArrayList<>();
     }
+
+    private <T> void handleMessage(final Message<T> tMessage) {
+        if(!stations.isEmpty()) {
+            tMessage.reply(stations);
+        } else {
+            LOG.info("Updating Velo Data");
+            String url = "/availability_map/getJsonObject";
+            client.get(url, response -> {
+                response.bodyHandler(b -> {
+                    LOG.info("Loading new Station Data...");
+                    try {
+                        List<VeloStation> stationList = Arrays.asList(GSON.fromJson(b.toString(), VeloStation[].class));
+                        tMessage.reply(stationList);
+                        stations = stationList;
+                    } catch (Exception ex) {
+                        LOG.error(ex);
+                    }
+                    LOG.info("Finished loading station data.");
+                });
+            }).end();
+        }
+        }
 }
