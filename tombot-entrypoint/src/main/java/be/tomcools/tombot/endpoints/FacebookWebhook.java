@@ -77,10 +77,9 @@ public class FacebookWebhook {
     }
 
     private void sendVeloAnalytics(FacebookContext context) {
-        eventbus.send(EventBusConstants.GET_VELO_DATA, null, handler -> {
+        VeloData.getData().setHandler(handler  -> {
             if(handler.succeeded()) {
-                List<VeloStation> stations = (List<VeloStation>)handler.result().body();
-
+                List<VeloStation> stations = handler.result();
                 long openStations = stations.stream()
                         .map(VeloStation::isOpen)
                         .count();
