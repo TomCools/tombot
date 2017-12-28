@@ -1,8 +1,11 @@
 package be.tomcools.tombot.endpoints;
 
+import be.tomcools.tombot.conversation.ConversationContext;
+import be.tomcools.tombot.conversation.quickreplies.QuickReplies;
 import be.tomcools.tombot.model.core.EventBusConstants;
 import be.tomcools.tombot.model.facebook.*;
 import be.tomcools.tombot.model.facebook.settings.SettingConstants;
+import be.tomcools.tombot.tools.JSON;
 import be.tomcools.tombot.velo.VeloData;
 import be.tomcools.tombot.velo.VeloStation;
 import com.google.gson.Gson;
@@ -15,10 +18,11 @@ import lombok.Builder;
 
 import java.util.List;
 
+import static be.tomcools.tombot.conversation.quickreplies.QuickReplies.*;
+
 @Builder
 public class FacebookWebhook {
     private static final Logger LOG = LoggerFactory.getLogger(FacebookWebhook.class);
-    private static final Gson GSON = new Gson();
     private EventBus eventbus;
 
     public void webhookRequestHandler(RoutingContext route) {
@@ -28,7 +32,7 @@ public class FacebookWebhook {
             request.respondToRequest();
         } else {
             request.handleBody(b -> {
-                FacebookMessage message = GSON.fromJson(b.toJsonObject().toString(), FacebookMessage.class);
+                FacebookMessage message = JSON.fromJson(b.toJsonObject().toString(), FacebookMessage.class);
                 LOG.info("Got Message: {}", message);
                 handleMessage(message);
             });
@@ -58,6 +62,8 @@ public class FacebookWebhook {
         } else if (context.isPostback()) {
             if (SettingConstants.GET_STARTED.equalsIgnoreCase(entryMessage.getPostback().getPayload())) {
                 handleGettingStarted(context);
+            } else {
+                context.sendReply("Oh look, a postback" + entryMessage.getPostback().getPayload());
             }
             LOG.debug("POSTBACK :-)");
         } else if (context.isReadConfirmation()) {
@@ -69,11 +75,25 @@ public class FacebookWebhook {
         context.sendReply("Hi! I am Avelo. I can help you find a bike station for Velo Antwerp!");
     }
 
-    private void handleFacebookMessage(FacebookContext context) {
-        context.sendReply("Replying to you... hopefully in a nice way.");
-        context.sendReply("Some analytics for now, while we continue building on this.");
+    private void handleFacebookMessage(FacebookContext facebookContext) {
+        eventbus.send(EventBusConstants.GET_CONVERSATION_CONTEXT, facebookContext.getSender().getId(), msg -> {
+          if(msg.succeeded()) {
+              ConversationContext conversationContext = (ConversationContext) msg.result().body();
+              this.handleConversation(facebookContext, conversationContext);
+          } else {
+              facebookContext.sendReply("Failed to get your previous conversation context :-(. " + msg.cause());
+          }
+        });
+    }
 
-        sendVeloAnalytics(context);
+    private void handleConversation(FacebookContext fbContext, ConversationContext conversationContext) {
+        if(conversationContext.isFirstContact()) {
+            fbContext.sendReply("So happy to have you talking to me! :-)");
+            //Send quickActions
+            fbContext.sendReply("What do you want to do?", BIKE_RETRIEVE, BIKE_RETURN);
+        }
+
+        sendVeloAnalytics(fbContext);
     }
 
     private void sendVeloAnalytics(FacebookContext context) {

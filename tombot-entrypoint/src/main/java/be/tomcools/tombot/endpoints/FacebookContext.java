@@ -2,15 +2,16 @@ package be.tomcools.tombot.endpoints;
 
 
 import be.tomcools.tombot.FacebookUtils;
+import be.tomcools.tombot.conversation.quickreplies.QuickReplies;
 import be.tomcools.tombot.model.core.EventBusConstants;
-import be.tomcools.tombot.model.core.UserDetails;
-import be.tomcools.tombot.model.facebook.FacebookMessageEntry;
-import be.tomcools.tombot.model.facebook.FacebookMessageMessaging;
-import be.tomcools.tombot.model.facebook.FacebookReplyMessage;
-import be.tomcools.tombot.model.facebook.SenderAction;
+import be.tomcools.tombot.model.facebook.*;
 import com.google.gson.Gson;
 import io.vertx.core.eventbus.EventBus;
 import lombok.Builder;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 public class FacebookContext {
@@ -18,6 +19,10 @@ public class FacebookContext {
     private EventBus eventBus;
     private FacebookMessageMessaging message;
     //private UserDetails userDetails;
+
+    public FacebookIdentifier getSender() {
+        return message.getSender();
+    }
 
     public String getMessageText() {
         return message.getMessage().getText();
@@ -41,6 +46,13 @@ public class FacebookContext {
 
     public void sendReply(String textReply) {
         FacebookReplyMessage replyMessage = FacebookUtils.replyMessage(message.getSender(), textReply);
+        eventBus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
+    }
+
+    public void sendReply(String textReply, QuickReplies... quickReplies) {
+        List<FacebookQuickReply> facebookQuickReplies = Arrays.stream(quickReplies).map(QuickReplies::getReply).collect(Collectors.toList());
+
+        FacebookReplyMessage replyMessage = FacebookUtils.replyMessage(message.getSender(), textReply, facebookQuickReplies);
         eventBus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
     }
 
