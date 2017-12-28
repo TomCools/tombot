@@ -1,16 +1,13 @@
 package be.tomcools.tombot.endpoints;
 
 import be.tomcools.tombot.conversation.ConversationContext;
-import be.tomcools.tombot.conversation.quickreplies.QuickReplies;
 import be.tomcools.tombot.model.core.EventBusConstants;
 import be.tomcools.tombot.model.facebook.*;
 import be.tomcools.tombot.model.facebook.settings.SettingConstants;
 import be.tomcools.tombot.tools.JSON;
 import be.tomcools.tombot.velo.VeloData;
 import be.tomcools.tombot.velo.VeloStation;
-import com.google.gson.Gson;
 import io.vertx.core.eventbus.EventBus;
-import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.RoutingContext;
@@ -18,7 +15,8 @@ import lombok.Builder;
 
 import java.util.List;
 
-import static be.tomcools.tombot.conversation.quickreplies.QuickReplies.*;
+import static be.tomcools.tombot.conversation.quickreplies.QuickReplies.BIKE_RETRIEVE;
+import static be.tomcools.tombot.conversation.quickreplies.QuickReplies.BIKE_RETURN;
 
 @Builder
 public class FacebookWebhook {
@@ -77,28 +75,22 @@ public class FacebookWebhook {
 
     private void handleFacebookMessage(FacebookContext facebookContext) {
         eventbus.send(EventBusConstants.GET_CONVERSATION_CONTEXT, facebookContext.getSender().getId(), msg -> {
-          if(msg.succeeded()) {
-              ConversationContext conversationContext = (ConversationContext) msg.result().body();
-              this.handleConversation(facebookContext, conversationContext);
-          } else {
-              facebookContext.sendReply("Failed to get your previous conversation context :-(. " + msg.cause());
-          }
+            if (msg.succeeded()) {
+                ConversationContext conversationContext = (ConversationContext) msg.result().body();
+                this.handleConversation(facebookContext, conversationContext);
+            } else {
+                facebookContext.sendReply("Failed to get your previous conversation context :-(. " + msg.cause());
+            }
         });
     }
 
     private void handleConversation(FacebookContext fbContext, ConversationContext conversationContext) {
-        if(conversationContext.isFirstContact()) {
-            fbContext.sendReply("So happy to have you talking to me! :-)");
-            //Send quickActions
-            fbContext.sendReply("What do you want to do?", BIKE_RETRIEVE, BIKE_RETURN);
-        }
-
-        sendVeloAnalytics(fbContext);
+        fbContext.sendReply("What do you want to do?", BIKE_RETRIEVE, BIKE_RETURN);
     }
 
     private void sendVeloAnalytics(FacebookContext context) {
-        VeloData.getData().setHandler(handler  -> {
-            if(handler.succeeded()) {
+        VeloData.getData().setHandler(handler -> {
+            if (handler.succeeded()) {
                 List<VeloStation> stations = handler.result();
                 long openStations = stations.stream()
                         .map(VeloStation::isOpen)
