@@ -14,7 +14,6 @@ public class ConversationContextVerticle extends AbstractVerticle {
     @Override
     public void start() throws Exception {
         contextMap = new HashMap<>();
-        vertx.eventBus().registerDefaultCodec(ConversationContext.class, JsonCodec.forClass(ConversationContext.class));
         vertx.eventBus().consumer(EventBusConstants.GET_CONVERSATION_CONTEXT, this::getConversation);
     }
 
