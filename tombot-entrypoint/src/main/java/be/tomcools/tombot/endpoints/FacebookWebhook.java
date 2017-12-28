@@ -97,8 +97,8 @@ public class FacebookWebhook {
                 fbContext.sendReply("Finding you a place to drop off your bike...");
             }
         } else {
-            //fbContext.sendReply("What do you want to do?", BIKE_RETRIEVE, BIKE_RETURN);
-            fbContext.sendReply("Where are you?", LOCATION);
+            fbContext.sendReply("What do you want to do?", BIKE_RETRIEVE, BIKE_RETURN);
+            //fbContext.sendReply("Where are you?", LOCATION);
         }
 
     }
