@@ -105,8 +105,10 @@ public class FacebookWebhook {
             });
         } else {
             fbContext.sendReply("Where are you?", LOCATION);
+
             //sendVeloAnalytics(fbContext);
         }
+        fbContext.senderAction(SenderAction.TYPING_OFF);
     }
 
     private void sendVeloAnalytics(FacebookContext context) {
