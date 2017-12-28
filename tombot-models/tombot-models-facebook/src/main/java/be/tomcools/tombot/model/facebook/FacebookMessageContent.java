@@ -22,4 +22,7 @@ public class FacebookMessageContent {
     public boolean hasQuickReply() {
         return quick_reply != null;
     }
+    public boolean hasAttachment() {
+        return attachment != null;
+    }
 }

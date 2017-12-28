@@ -90,17 +90,18 @@ public class FacebookWebhook {
 
     private void handleConversation(FacebookContext fbContext, ConversationContext conversationContext) {
         FacebookMessageContent msg = fbContext.getMessage();
-        if(msg.hasQuickReply()) {
-            if(BIKE_RETRIEVE.getReply().getPayload().equalsIgnoreCase(msg.getQuick_reply().getPayload())) {
+        if (msg.hasQuickReply()) {
+            if (BIKE_RETRIEVE.getReply().getPayload().equalsIgnoreCase(msg.getQuick_reply().getPayload())) {
                 fbContext.sendReply("Finding you a place to get a bike...");
-            } else if(BIKE_RETURN.getReply().getPayload().equalsIgnoreCase(msg.getQuick_reply().getPayload())) {
+            } else if (BIKE_RETURN.getReply().getPayload().equalsIgnoreCase(msg.getQuick_reply().getPayload())) {
                 fbContext.sendReply("Finding you a place to drop off your bike...");
             }
-        } else {
+        } else if (msg.hasAttachment() && msg.getAttachment().isLocation()) {
+            fbContext.sendReply("Thank you for location");
             fbContext.sendReply("What do you want to do?", BIKE_RETRIEVE, BIKE_RETURN);
-            //fbContext.sendReply("Where are you?", LOCATION);
+        } else {
+            fbContext.sendReply("Where are you?", LOCATION);
         }
-
     }
 
     private void sendVeloAnalytics(FacebookContext context) {

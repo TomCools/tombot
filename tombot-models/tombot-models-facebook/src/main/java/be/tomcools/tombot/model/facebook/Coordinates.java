@@ -1,20 +1,17 @@
 package be.tomcools.tombot.model.facebook;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Created by tomco on 7/11/2016.
- */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AttachementPayload {
-    //for multimedia
-    private String url;
-    //location
-    private Coordinates coordinates;
+public class Coordinates {
+    Double lat;
+    @SerializedName("long")
+    Double longitude;
 }
