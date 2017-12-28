@@ -8,6 +8,7 @@ import be.tomcools.tombot.tools.JSON;
 import be.tomcools.tombot.velo.VeloData;
 import be.tomcools.tombot.velo.VeloStation;
 import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.RoutingContext;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import static be.tomcools.tombot.conversation.quickreplies.QuickReplies.BIKE_RETRIEVE;
 import static be.tomcools.tombot.conversation.quickreplies.QuickReplies.BIKE_RETURN;
+import static be.tomcools.tombot.conversation.quickreplies.QuickReplies.LOCATION;
 
 @Builder
 public class FacebookWebhook {
@@ -30,8 +32,9 @@ public class FacebookWebhook {
             request.respondToRequest();
         } else {
             request.handleBody(b -> {
-                FacebookMessage message = JSON.fromJson(b.toJsonObject().toString(), FacebookMessage.class);
-                LOG.info("Got Message: {}", message);
+                JsonObject jsonObject = b.toJsonObject();
+                LOG.info("Got Request from Facebook: " + jsonObject);
+                FacebookMessage message = JSON.fromJson(jsonObject.toString(), FacebookMessage.class);
                 handleMessage(message);
             });
         }
@@ -53,19 +56,20 @@ public class FacebookWebhook {
         FacebookContext context = new FacebookContext(eventbus, entryMessage);
 
         if (context.isMessage()) {
+            LOG.info("Got Message from Facebook: " + context.getMessageText());
             context.senderAction(SenderAction.TYPING_ON);
             handleFacebookMessage(context);
         } else if (context.isDelivery()) {
-            System.out.println(entryMessage.getDelivery().getSeq() + " delivered");
+            LOG.info("Message delivery confirmation");
         } else if (context.isPostback()) {
+            LOG.info("Got POSTBACK");
             if (SettingConstants.GET_STARTED.equalsIgnoreCase(entryMessage.getPostback().getPayload())) {
                 handleGettingStarted(context);
             } else {
                 context.sendReply("Oh look, a postback" + entryMessage.getPostback().getPayload());
             }
-            LOG.debug("POSTBACK :-)");
         } else if (context.isReadConfirmation()) {
-            LOG.debug("ReadConfirmation");
+            LOG.info("Got Read Confirmation");
         }
     }
 
@@ -85,7 +89,8 @@ public class FacebookWebhook {
     }
 
     private void handleConversation(FacebookContext fbContext, ConversationContext conversationContext) {
-        fbContext.sendReply("What do you want to do?", BIKE_RETRIEVE, BIKE_RETURN);
+        fbContext.sendReply("Where are you?", LOCATION);
+        //fbContext.sendReply("What do you want to do?", BIKE_RETRIEVE, BIKE_RETURN);
     }
 
     private void sendVeloAnalytics(FacebookContext context) {
