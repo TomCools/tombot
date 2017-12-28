@@ -96,12 +96,16 @@ public class FacebookWebhook {
             } else if (BIKE_RETURN.getReply().getPayload().equalsIgnoreCase(msg.getQuick_reply().getPayload())) {
                 fbContext.sendReply("Finding you a place to drop off your bike...");
             }
-        } else if (msg.hasAttachment() && msg.getAttachment().isLocation()) {
-            fbContext.sendReply("Thank you for location");
-            fbContext.sendReply("What do you want to do?", BIKE_RETRIEVE, BIKE_RETURN);
+        } else if (msg.hasAttachments()) {
+            msg.getAttachments().forEach(facebookMessageAttachment -> {
+                if(facebookMessageAttachment.isLocation()) {
+                    fbContext.sendReply("Thank you for location: " + facebookMessageAttachment.getPayload().getCoordinates());
+                    fbContext.sendReply("What do you want to do?", BIKE_RETRIEVE, BIKE_RETURN);
+                }
+            });
         } else {
-            //fbContext.sendReply("Where are you?", LOCATION);
-            sendVeloAnalytics(fbContext);
+            fbContext.sendReply("Where are you?", LOCATION);
+            //sendVeloAnalytics(fbContext);
         }
     }
 

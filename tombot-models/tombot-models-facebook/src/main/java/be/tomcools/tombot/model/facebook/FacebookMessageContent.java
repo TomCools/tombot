@@ -15,14 +15,18 @@ public class FacebookMessageContent {
     private String mid;
     private Long seq;
     private String text;
+    //sending message
     private FacebookMessageAttachment attachment;
     private List<FacebookQuickReply> quick_replies;
+
+    //Retrieving message
+    private List<FacebookMessageAttachment> attachments;
     private FacebookQuickReplyAnswer quick_reply;
 
     public boolean hasQuickReply() {
         return quick_reply != null;
     }
-    public boolean hasAttachment() {
-        return attachment != null;
+    public boolean hasAttachments() {
+        return attachments != null && !attachments.isEmpty();
     }
 }
