@@ -8,6 +8,9 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 
+import java.time.Instant;
+import java.util.Date;
+
 public class HttpVerticle extends AbstractVerticle {
     private static final Logger LOG = LoggerFactory.getLogger(HttpVerticle.class);
 
@@ -17,7 +20,11 @@ public class HttpVerticle extends AbstractVerticle {
         router.exceptionHandler(throwable -> System.err.println(throwable.getCause() + ":" + throwable.getMessage()));
         router.route("/webhook").handler(FacebookWebhook.builder().eventbus(vertx.eventBus()).build()::webhookRequestHandler);
         router.route("/command/*").handler(CommandHandler.builder().eventbus(vertx.eventBus()).build()::handleRequest);
-        router.route("/*").handler(this::isAlive);
+
+        Instant startupTime = Instant.now();
+        router.route("/*").handler(r -> {
+            r.request().response().end("I'm Alive! since: " + startupTime.toString());
+        });
 
         Integer portNumber = config().getInteger("http.port", 80);
 
@@ -25,9 +32,5 @@ public class HttpVerticle extends AbstractVerticle {
                 .requestHandler(router::accept)
                 .listen(portNumber);
         LOG.info("Hi :-) Bot has started on port: " + portNumber);
-    }
-
-    private void isAlive(RoutingContext routingContext) {
-        routingContext.request().response().end("I'm Alive!");
     }
 }
