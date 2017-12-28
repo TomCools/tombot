@@ -17,4 +17,9 @@ public class FacebookMessageContent {
     private String text;
     private FacebookMessageAttachment attachment;
     private List<FacebookQuickReply> quick_replies;
+    private FacebookQuickReplyAnswer quick_reply;
+
+    public boolean hasQuickReply() {
+        return quick_reply != null;
+    }
 }

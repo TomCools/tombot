@@ -28,6 +28,10 @@ public class FacebookContext {
         return message.getMessage().getText();
     }
 
+    public FacebookMessageContent getMessage() {
+        return message.getMessage();
+    }
+
     public boolean isMessage() {
         return message.isMessage();
     }
