@@ -1,18 +1,17 @@
 package be.tomcools.tombot.tools.codecs;
 
 import be.tomcools.tombot.tools.JSON;
-import com.google.gson.Gson;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.MessageCodec;
 
-public class JsonCodec<T> implements MessageCodec<T,T> {
+public class JsonCodec<T> implements MessageCodec<T, T> {
     private Class<T> theClass;
 
     private JsonCodec(Class<T> theClass) {
         this.theClass = theClass;
     }
 
-    public static <Y> MessageCodec<Y,Y> forClass(Class<Y> aClass) {
+    public static <Y> MessageCodec<Y, Y> forClass(Class<Y> aClass) {
         return new JsonCodec<Y>(aClass);
     }
 
@@ -34,8 +33,8 @@ public class JsonCodec<T> implements MessageCodec<T,T> {
 
         // Get JSON string by it`s length
         // Jump 4 because getInt() == 4 bytes
-        String jsonStr = buffer.getString(_pos+=4, _pos+=length);
-        return JSON.fromJson(jsonStr,this.theClass);
+        String jsonStr = buffer.getString(_pos += 4, _pos += length);
+        return JSON.fromJson(jsonStr, this.theClass);
     }
 
     @Override
@@ -47,7 +46,7 @@ public class JsonCodec<T> implements MessageCodec<T,T> {
 
     @Override
     public String name() {
-        return null;
+        return theClass.getName();
     }
 
     @Override
