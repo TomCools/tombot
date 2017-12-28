@@ -19,8 +19,12 @@ public class FacebookRequest {
 
     public void handleBody(Handler<Buffer> handler) {
         HttpServerResponse response = r.response();
-        response.setStatusCode(200).end();
-        r.bodyHandler(handler);
+        try {
+            r.bodyHandler(handler);
+            response.setStatusCode(200).end();
+        } catch(Exception ex) {
+            response.setStatusCode(500).end(ex.getMessage());
+        }
     }
 
     public void respondToRequest() {

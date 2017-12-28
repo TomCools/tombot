@@ -98,7 +98,7 @@ public class FacebookWebhook {
             }
         } else if (msg.hasAttachments()) {
             msg.getAttachments().forEach(facebookMessageAttachment -> {
-                if(facebookMessageAttachment.isLocation()) {
+                if (facebookMessageAttachment.isLocation()) {
                     fbContext.sendReply("Thank you for location: " + facebookMessageAttachment.getPayload().getCoordinates());
                     fbContext.sendReply("What do you want to do?", BIKE_RETRIEVE, BIKE_RETURN);
                 }
