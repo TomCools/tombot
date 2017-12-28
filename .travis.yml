@@ -17,7 +17,5 @@ script:
   - docker build -t tombot -t $REPO:$TAG -f Dockerfile .
 
 after_success:
-  - docker login -u $DOCKER_USER -p $DOCKER_PASS
-  - docker tag $REPO:$COMMIT $REPO:$TAG
-  - docker tag $REPO:$COMMIT $REPO:$TRAVIS_BUILD_NUMBER
+  - docker login -u $DOCKER_USER --password-stdin $DOCKER_PASS
   - docker push $REPO
