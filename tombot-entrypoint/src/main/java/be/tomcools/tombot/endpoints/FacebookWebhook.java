@@ -100,7 +100,8 @@ public class FacebookWebhook {
             fbContext.sendReply("Thank you for location");
             fbContext.sendReply("What do you want to do?", BIKE_RETRIEVE, BIKE_RETURN);
         } else {
-            fbContext.sendReply("Where are you?", LOCATION);
+            //fbContext.sendReply("Where are you?", LOCATION);
+            sendVeloAnalytics(fbContext);
         }
     }
 
