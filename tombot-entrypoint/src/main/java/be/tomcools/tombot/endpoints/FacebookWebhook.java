@@ -89,8 +89,8 @@ public class FacebookWebhook {
     }
 
     private void handleConversation(FacebookContext fbContext, ConversationContext conversationContext) {
-        fbContext.sendReply("Where are you?", LOCATION);
-        //fbContext.sendReply("What do you want to do?", BIKE_RETRIEVE, BIKE_RETURN);
+        //fbContext.sendReply("Where are you?", LOCATION);
+        fbContext.sendReply("What do you want to do?", BIKE_RETRIEVE, BIKE_RETURN);
     }
 
     private void sendVeloAnalytics(FacebookContext context) {
