@@ -124,7 +124,8 @@ public class FacebookWebhook {
                         .findFirst();
                 if(closestStationWithAvailableBikes.isPresent()) {
                     VeloStation station = closestStationWithAvailableBikes.get();
-                    fbContext.sendReply("Closest station for dropoff is: " + station.getName() + " " + station.getCoordinates());
+                    fbContext.sendReply("Closest station for dropoff is: " + station.getName());
+                    fbContext.sendLocation(station.getCoordinates());
                 } else {
                     fbContext.sendReply("Damn yo! No bikes available nowhere :(");
                 }

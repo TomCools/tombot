@@ -60,6 +60,11 @@ public class FacebookContext {
         eventBus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
     }
 
+    public void sendLocation(Coordinates coordinates) {
+        FacebookReplyMessage replyMessage = FacebookUtils.replyLocation(message.getSender(), coordinates);
+        eventBus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
+    }
+
     public void senderAction(SenderAction action) {
         FacebookReplyMessage replyMessage = FacebookUtils.senderAction(message.getSender(), action);
         eventBus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
