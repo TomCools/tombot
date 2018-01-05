@@ -1,5 +1,6 @@
 package be.tomcools.tombot.velo;
 
+import be.tomcools.tombot.model.facebook.Coordinates;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,10 @@ public class VeloStation {
     private String status;
     private String name;
     private String stationType;
+
+    public Coordinates getCoordinates() {
+        return new Coordinates(Double.parseDouble(lat),Double.parseDouble(lon));
+    }
 
     public boolean isOpen() {
         return "OPN".equalsIgnoreCase(status);

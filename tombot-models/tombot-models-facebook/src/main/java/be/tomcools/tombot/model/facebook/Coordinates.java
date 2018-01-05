@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Coordinates {
-    Double lat;
+    @SerializedName("lat")
+    Double latitude;
     @SerializedName("long")
     Double longitude;
 }
