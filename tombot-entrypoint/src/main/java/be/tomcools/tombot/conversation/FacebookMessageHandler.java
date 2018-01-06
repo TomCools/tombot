@@ -91,6 +91,6 @@ public class FacebookMessageHandler implements MessageHandler {
     }
 
     private String bikeStationImageDetails(VeloStation station) {
-        return String.format("Station: %s\nOpen Spaces: %d\nAvailable Bikes: %d", station.getName(), station.getAvailableSlots(), station.getAvailableBikes());
+        return String.format("Station: %s\nOpen Spaces: %d\nAvailable Bikes: %d", station.getCleanName(), station.getAvailableSlots(), station.getAvailableBikes());
     }
 }

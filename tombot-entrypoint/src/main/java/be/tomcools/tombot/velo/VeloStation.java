@@ -20,8 +20,12 @@ public class VeloStation {
     private String name;
     private String stationType;
 
+    public String getCleanName() {
+        return this.name.replaceFirst(this.id, "").replaceFirst("- ", "");
+    }
+
     public Coordinates getCoordinates() {
-        return new Coordinates(Double.parseDouble(lat),Double.parseDouble(lon));
+        return new Coordinates(Double.parseDouble(lat), Double.parseDouble(lon));
     }
 
     public boolean isOpen() {
