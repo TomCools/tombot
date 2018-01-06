@@ -1,5 +1,6 @@
 package be.tomcools.tombot.conversation;
 
+import be.tomcools.tombot.conversation.answering.Answers;
 import be.tomcools.tombot.conversation.context.ConversationContext;
 import be.tomcools.tombot.conversation.context.LocationDetail;
 import be.tomcools.tombot.endpoints.FacebookContext;
@@ -36,14 +37,14 @@ public class FacebookMessageHandler implements MessageHandler {
                 }
             });
         } else {
-            fbContext.sendReply("Where are you?", LOCATION);
+            fbContext.sendReply(Answers.askForLocation(), LOCATION);
         }
         fbContext.senderAction(SenderAction.TYPING_OFF);
     }
 
     private void handleQuickReplyBikeRetrieve(FacebookContext fbContext, ConversationContext conversationContext) {
         LocationDetail location = conversationContext.getLocation();
-        fbContext.sendReply("Finding you a place to get a bike...");
+        fbContext.sendReply(Answers.findingPlaceToRetrieveBike());
         this.openStations(fbContext, stream -> {
             Optional<VeloStation> closestStationWithAvailableBikes = stream
                     .sorted(SortOnDistance.from(location.getCoordinates()))
@@ -52,17 +53,17 @@ public class FacebookMessageHandler implements MessageHandler {
                     .findFirst();
             if (closestStationWithAvailableBikes.isPresent()) {
                 VeloStation station = closestStationWithAvailableBikes.get();
-                fbContext.sendReply("Closest station for pickup is: " + station.getName());
+                fbContext.sendReply(Answers.closestLocationPickup(station));
                 fbContext.sendLocation(bikeStationImageDetails(station), station.getCoordinates());
             } else {
-                fbContext.sendReply("Damn yo! No bikes available nowhere :(");
+                fbContext.sendReply("Damn yo! No bikes available nowhere.");
             }
         });
     }
 
     private void handleQuickReplyBikeReturn(FacebookContext fbContext, ConversationContext conversationContext) {
         LocationDetail location = conversationContext.getLocation();
-        fbContext.sendReply("Finding you a place to return your bike...");
+        fbContext.sendReply(Answers.findingPlaceToReturnBike());
         this.openStations(fbContext, (veloStationStream -> {
             Optional<VeloStation> closestStationWithAvailableBikes = veloStationStream
                     .sorted(SortOnDistance.from(location.getCoordinates()))
@@ -71,10 +72,10 @@ public class FacebookMessageHandler implements MessageHandler {
                     .findFirst();
             if (closestStationWithAvailableBikes.isPresent()) {
                 VeloStation station = closestStationWithAvailableBikes.get();
-                fbContext.sendReply("Closest station for dropoff is: " + station.getName());
+                fbContext.sendReply(Answers.closestLocationDropoff(station));
                 fbContext.sendLocation(bikeStationImageDetails(station), station.getCoordinates());
             } else {
-                fbContext.sendReply("Damn yo! All nearby station are full :(");
+                fbContext.sendReply("Damn yo! All nearby station are full.");
             }
         }));
     }
@@ -84,7 +85,7 @@ public class FacebookMessageHandler implements MessageHandler {
             if (handler.succeeded()) {
                 handling.accept(handler.result().stream().filter(VeloStation::isOpen));
             } else {
-                fbContext.sendReply("Oh sorry, we couldn't get the Velodata :( something is going on...");
+                fbContext.sendReply(Answers.couldNotRetrieveVeloData());
             }
         });
     }
