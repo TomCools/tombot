@@ -22,11 +22,15 @@ public class FacebookUtils {
     }
 
     public static FacebookReplyMessage replyLocation(FacebookIdentifier recipient, Coordinates coordinates) {
+        return replyLocation(recipient, "", coordinates);
+    }
+
+    public static FacebookReplyMessage replyLocation(FacebookIdentifier recipient, String locationName, Coordinates coordinates) {
         return FacebookReplyMessage.builder()
                 .messaging_type("RESPONSE")
                 .recipient(recipient)
                 .message(FacebookOutgoingMessageContent.builder()
-                        .attachment(FacebookMessageAttachment.forLocation(coordinates)).build())
+                        .attachment(FacebookMessageAttachment.forLocation(coordinates, locationName)).build())
                 .build();
     }
 

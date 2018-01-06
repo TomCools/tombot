@@ -1,4 +1,4 @@
-package be.tomcools.tombot.conversation;
+package be.tomcools.tombot.conversation.context;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,8 +1,9 @@
 package be.tomcools.tombot.endpoints;
 
-import be.tomcools.tombot.conversation.ConversationContext;
-import be.tomcools.tombot.conversation.ConversationContextCache;
-import be.tomcools.tombot.conversation.LocationDetail;
+import be.tomcools.tombot.conversation.FacebookMessageHandler;
+import be.tomcools.tombot.conversation.context.ConversationContext;
+import be.tomcools.tombot.conversation.context.ConversationContextCache;
+import be.tomcools.tombot.conversation.context.LocationDetail;
 import be.tomcools.tombot.model.facebook.*;
 import be.tomcools.tombot.model.facebook.settings.SettingConstants;
 import be.tomcools.tombot.tools.JSON;
@@ -85,54 +86,7 @@ public class FacebookWebhook {
     }
 
     private void handleConversation(FacebookContext fbContext, ConversationContext conversationContext) {
-        FacebookIncommingMessageContent msg = fbContext.getMessage();
-        if (msg.hasQuickReply()) {
-            if (BIKE_RETRIEVE.getReply().getPayload().equalsIgnoreCase(msg.getQuick_reply().getPayload())) {
-                handleQuickReplyBikeRetrieve(fbContext, conversationContext);
-            } else if (BIKE_RETURN.getReply().getPayload().equalsIgnoreCase(msg.getQuick_reply().getPayload())) {
-                fbContext.sendReply("Finding you a place to drop off your bike...");
-            }
-        } else if (msg.hasAttachments()) {
-            msg.getAttachments().forEach(facebookMessageAttachment -> {
-                if (facebookMessageAttachment.isLocation()) {
-                    Coordinates coordinates = facebookMessageAttachment.getLocation();
-                    fbContext.sendReply("Thank you for location: " + coordinates);
-                    conversationContext.setLocation(new LocationDetail(new Date(), coordinates));
-                    fbContext.sendReply("What do you want to do?", BIKE_RETRIEVE, BIKE_RETURN);
-                }
-            });
-        } else {
-            fbContext.sendReply("Where are you?", LOCATION);
-        }
-        fbContext.senderAction(SenderAction.TYPING_OFF);
-    }
-
-    private void handleQuickReplyBikeRetrieve(FacebookContext fbContext, ConversationContext conversationContext) {
-        LocationDetail location = conversationContext.getLocation();
-        fbContext.sendReply("Finding you a place to get a bike...");
-        VeloData.getData().setHandler(handler -> {
-            if (handler.succeeded()) {
-                List<VeloStation> stations = handler.result();
-                Optional<VeloStation> closestStationWithAvailableBikes = stations.stream()
-                        .sorted((s1, s2) -> {
-                            double distanceTo1 = DistanceCalculator.calculateDistanceKm(location.getCoordinates(), s1.getCoordinates());
-                            double distanceTo2 = DistanceCalculator.calculateDistanceKm(location.getCoordinates(), s2.getCoordinates());
-                            return Double.compare(distanceTo1, distanceTo2);
-                        }).limit(10)
-                        .filter(VeloStation::isOpen)
-                        .filter(s->s.getAvailableBikes() > 0)
-                        .findFirst();
-                if(closestStationWithAvailableBikes.isPresent()) {
-                    VeloStation station = closestStationWithAvailableBikes.get();
-                    fbContext.sendReply("Closest station for dropoff is: " + station.getName());
-                    fbContext.sendLocation(station.getCoordinates());
-                } else {
-                    fbContext.sendReply("Damn yo! No bikes available nowhere :(");
-                }
-            } else {
-                fbContext.sendReply("Oh sorry, we couldn't get the Velodata :( something is going on...");
-            }
-        });
+        new FacebookMessageHandler().handle(fbContext,conversationContext);
     }
 
     private void sendVeloAnalytics(FacebookContext context) {

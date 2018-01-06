@@ -1,6 +1,6 @@
 package be.tomcools.tombot;
 
-import be.tomcools.tombot.conversation.ConversationContext;
+import be.tomcools.tombot.conversation.context.ConversationContext;
 import be.tomcools.tombot.tools.codecs.JsonCodec;
 import be.tomcools.tombot.velo.VeloData;
 import io.vertx.core.AbstractVerticle;

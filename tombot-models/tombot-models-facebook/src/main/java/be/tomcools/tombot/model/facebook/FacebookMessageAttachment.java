@@ -26,13 +26,13 @@ public class FacebookMessageAttachment {
         return FacebookMessageAttachment.builder().type(AttachementTypes.IMAGE.getName()).payload(ImageAttachementPayload.builder().url(image).build()).build();
     }
 
-    public static FacebookMessageAttachment forLocation(Coordinates location) {
+    public static FacebookMessageAttachment forLocation(Coordinates location, String title) {
         //SEE https://stackoverflow.com/questions/38017382/how-to-send-location-from-facebook-messenger-platform
         return FacebookMessageAttachment.builder().type(AttachementTypes.TEMPLATE.getName()).payload(
                 TemplateAttachement.builder()
                         .templateType("generic")
                         .element(TemplateElement.builder()
-                                .title("Directions to your station.")
+                                .title(title)
                                 .imageUrl(String.format(GOOGLE_LOCATION_URL_FORMAT, location.getLatitude(), location.getLongitude(), location.getLatitude(), location.getLongitude()))
                                 .itemUrl(String.format(APPLE_LOCATION_URL_FORMAT, location.getLatitude(), location.getLongitude()))
                                 .build())
