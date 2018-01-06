@@ -2,7 +2,6 @@ package be.tomcools.tombot;
 
 import be.tomcools.tombot.model.facebook.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class FacebookUtils {
@@ -10,7 +9,7 @@ public class FacebookUtils {
         return FacebookReplyMessage.builder()
                 .messaging_type("RESPONSE")
                 .recipient(recipient)
-                .message(FacebookMessageContent.builder().text(message).build())
+                .message(FacebookOutgoingMessageContent.builder().text(message).build())
                 .build();
     }
 
@@ -18,7 +17,7 @@ public class FacebookUtils {
         return FacebookReplyMessage.builder()
                 .messaging_type("RESPONSE")
                 .recipient(recipient)
-                .message(FacebookMessageContent.builder().text(message).quick_replies(quickReplies).build())
+                .message(FacebookOutgoingMessageContent.builder().text(message).quick_replies(quickReplies).build())
                 .build();
     }
 
@@ -26,7 +25,7 @@ public class FacebookUtils {
         return FacebookReplyMessage.builder()
                 .messaging_type("RESPONSE")
                 .recipient(recipient)
-                .message(FacebookMessageContent.builder()
+                .message(FacebookOutgoingMessageContent.builder()
                         .attachment(FacebookMessageAttachment.forLocation(coordinates)).build())
                 .build();
     }

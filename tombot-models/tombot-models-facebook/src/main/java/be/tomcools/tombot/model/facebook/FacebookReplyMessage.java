@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class FacebookReplyMessage {
     private String messaging_type;
     private FacebookIdentifier recipient;
-    private FacebookMessageContent message;
+    private FacebookOutgoingMessageContent message;
     private String sender_action;
 }

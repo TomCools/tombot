@@ -28,7 +28,7 @@ public class FacebookContext {
         return message.getMessage().getText();
     }
 
-    public FacebookMessageContent getMessage() {
+    public FacebookIncommingMessageContent getMessage() {
         return message.getMessage();
     }
 

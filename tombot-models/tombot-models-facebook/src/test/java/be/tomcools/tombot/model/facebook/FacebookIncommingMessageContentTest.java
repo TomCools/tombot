@@ -10,11 +10,11 @@ import static org.junit.Assert.assertThat;
 /**
  * Created by tomco on 27/11/2016.
  */
-public class FacebookMessageContentTest {
+public class FacebookIncommingMessageContentTest {
 
     @Test
     public void whenConvertingToJsonString_stringDoesNotContainEmptySeq() {
-        FacebookMessageContent content = FacebookMessageContent.builder()
+        FacebookIncommingMessageContent content = FacebookIncommingMessageContent.builder()
                 .text("Hello")
                 .build();
 

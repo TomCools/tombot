@@ -85,7 +85,7 @@ public class FacebookWebhook {
     }
 
     private void handleConversation(FacebookContext fbContext, ConversationContext conversationContext) {
-        FacebookMessageContent msg = fbContext.getMessage();
+        FacebookIncommingMessageContent msg = fbContext.getMessage();
         if (msg.hasQuickReply()) {
             if (BIKE_RETRIEVE.getReply().getPayload().equalsIgnoreCase(msg.getQuick_reply().getPayload())) {
                 handleQuickReplyBikeRetrieve(fbContext, conversationContext);
@@ -95,7 +95,7 @@ public class FacebookWebhook {
         } else if (msg.hasAttachments()) {
             msg.getAttachments().forEach(facebookMessageAttachment -> {
                 if (facebookMessageAttachment.isLocation()) {
-                    Coordinates coordinates = facebookMessageAttachment.getPayload().getCoordinates();
+                    Coordinates coordinates = facebookMessageAttachment.getLocation();
                     fbContext.sendReply("Thank you for location: " + coordinates);
                     conversationContext.setLocation(new LocationDetail(new Date(), coordinates));
                     fbContext.sendReply("What do you want to do?", BIKE_RETRIEVE, BIKE_RETURN);

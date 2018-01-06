@@ -2,7 +2,7 @@ package be.tomcools.tombot.command;
 
 import be.tomcools.tombot.model.core.EventBusConstants;
 import be.tomcools.tombot.model.facebook.FacebookIdentifier;
-import be.tomcools.tombot.model.facebook.FacebookMessageContent;
+import be.tomcools.tombot.model.facebook.FacebookOutgoingMessageContent;
 import be.tomcools.tombot.model.facebook.FacebookReplyMessage;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.Json;
@@ -42,7 +42,8 @@ public class CommandHandler {
                 for (Object i : result) {
                     FacebookReplyMessage replyMessage = FacebookReplyMessage.builder()
                             .recipient(FacebookIdentifier.builder().id(i.toString()).build())
-                            .message(FacebookMessageContent.builder().text("Someone trigger me to spam you :( Sorry, i have no control...: " + message)
+                            .message(FacebookOutgoingMessageContent.builder(
+                            ).text("Someone trigger me to spam you :( Sorry, i have no control...: " + message)
                                     .build())
                             .build();
 

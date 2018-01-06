@@ -1,20 +1,15 @@
-package be.tomcools.tombot.model.facebook;
+package be.tomcools.tombot.model.facebook.attachement;
 
+import be.tomcools.tombot.model.facebook.Coordinates;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Created by tomco on 7/11/2016.
- */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AttachementPayload {
-    //for multimedia
-    private String url;
-    //location
+public class LocationAttachementPayload implements AttachementPayloadContent{
     private Coordinates coordinates;
 }

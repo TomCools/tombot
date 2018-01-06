@@ -2,31 +2,12 @@ package be.tomcools.tombot.model.facebook;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-import java.util.List;
-
-@Data
-@Builder
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
-public class FacebookMessageContent {
-    private String mid;
-    private Long seq;
-    private String text;
-    //sending message
-    private FacebookMessageAttachment attachment;
-    private List<FacebookQuickReply> quick_replies;
-
-    //Retrieving message
-    private List<FacebookMessageAttachment> attachments;
-    private FacebookQuickReplyAnswer quick_reply;
-
-    public boolean hasQuickReply() {
-        return quick_reply != null;
-    }
-    public boolean hasAttachments() {
-        return attachments != null && !attachments.isEmpty();
-    }
+public abstract class FacebookMessageContent {
+    protected String mid;
+    protected Long seq;
+    protected String text;
 }

@@ -13,7 +13,7 @@ public class FacebookMessageMessaging {
     private FacebookIdentifier sender;
     private FacebookIdentifier recipient;
     private Long timestamp;
-    private FacebookMessageContent message;
+    private FacebookIncommingMessageContent message;
     private FacebookMessageDelivery delivery;
     private FacebookMessageRead read;
     private FacebookMessagePostback postback;
