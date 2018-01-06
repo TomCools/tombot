@@ -3,9 +3,6 @@ package be.tomcools.tombot.model.core;
 import lombok.Builder;
 import lombok.Getter;
 
-/**
- * Created by tomco on 7/11/2016.
- */
 @Builder
 @Getter
 public class UserDetails {

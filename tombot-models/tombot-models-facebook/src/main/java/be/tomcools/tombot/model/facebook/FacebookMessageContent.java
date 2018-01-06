@@ -1,7 +1,6 @@
 package be.tomcools.tombot.model.facebook;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter

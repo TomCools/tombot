@@ -1,8 +1,6 @@
 package be.tomcools.tombot.tools;
 
 import be.tomcools.tombot.model.facebook.FacebookMessageAttachment;
-import be.tomcools.tombot.model.facebook.attachement.AttachementPayloadContent;
-import be.tomcools.tombot.model.facebook.attachement.AttachementTypes;
 import be.tomcools.tombot.tools.custom.FacebookMessageAttachementDeserializer;
 import com.google.gson.*;
 import com.google.gson.internal.Excluder;

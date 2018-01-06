@@ -5,9 +5,7 @@ import be.tomcools.tombot.model.facebook.FacebookQuickReply;
 import be.tomcools.tombot.tools.JSON;
 
 public enum QuickReplies implements QuickReply {
-    LOCATION(FacebookQuickReply.builder().content_type("location").build()),
-    BIKE_RETURN(FacebookQuickReply.builder().title("Return a Bike").payload("BIKE_RETURN").content_type("text").build()),
-    BIKE_RETRIEVE(FacebookQuickReply.builder().title("Find a Bike").payload("BIKE_RETRIEVE").content_type("text").build());
+    LOCATION(FacebookQuickReply.builder().content_type("location").build());
 
     private FacebookQuickReply reply;
 

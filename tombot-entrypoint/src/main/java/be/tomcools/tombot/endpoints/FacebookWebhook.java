@@ -3,11 +3,9 @@ package be.tomcools.tombot.endpoints;
 import be.tomcools.tombot.conversation.FacebookMessageHandler;
 import be.tomcools.tombot.conversation.context.ConversationContext;
 import be.tomcools.tombot.conversation.context.ConversationContextCache;
-import be.tomcools.tombot.conversation.context.LocationDetail;
 import be.tomcools.tombot.model.facebook.*;
 import be.tomcools.tombot.model.facebook.settings.SettingConstants;
 import be.tomcools.tombot.tools.JSON;
-import be.tomcools.tombot.velo.DistanceCalculator;
 import be.tomcools.tombot.velo.VeloData;
 import be.tomcools.tombot.velo.VeloStation;
 import io.vertx.core.eventbus.EventBus;
@@ -17,11 +15,7 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.RoutingContext;
 import lombok.Builder;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-
-import static be.tomcools.tombot.conversation.quickreplies.QuickReplies.*;
 
 @Builder
 public class FacebookWebhook {

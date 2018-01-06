@@ -1,5 +1,7 @@
 package be.tomcools.tombot.velo;
 
+import be.tomcools.tombot.conversation.answering.Answers;
+import be.tomcools.tombot.endpoints.FacebookContext;
 import com.google.gson.Gson;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -11,6 +13,8 @@ import io.vertx.core.logging.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public class VeloData extends AbstractVerticle {
     private static final Logger LOG = LoggerFactory.getLogger(VeloData.class);
@@ -61,5 +65,15 @@ public class VeloData extends AbstractVerticle {
             }).end();
         }
         return future;
+    }
+
+    public static void openStations(FacebookContext fbContext, Consumer<Stream<VeloStation>> handling) {
+        VeloData.getData().setHandler(handler -> {
+            if (handler.succeeded()) {
+                handling.accept(handler.result().stream().filter(VeloStation::isOpen));
+            } else {
+                fbContext.sendReply(Answers.couldNotRetrieveVeloData());
+            }
+        });
     }
 }

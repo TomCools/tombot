@@ -10,4 +10,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FacebookQuickReplyAnswer {
     private String payload;
+
+    public boolean isFlowActivationMessage() {
+        return payload.contains("FLOW_ACTIVATION");
+    }
+
+    public boolean isFlowSwitchConfirmation() {
+        return payload.contains("FLOW_SWITCH_CONFIRMATION");
+    }
 }
