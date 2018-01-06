@@ -2,7 +2,7 @@ package be.tomcools.tombot.endpoints;
 
 
 import be.tomcools.tombot.FacebookUtils;
-import be.tomcools.tombot.conversation.quickreplies.QuickReplies;
+import be.tomcools.tombot.conversation.quickreplies.QuickReply;
 import be.tomcools.tombot.model.core.EventBusConstants;
 import be.tomcools.tombot.model.facebook.*;
 import com.google.gson.Gson;
@@ -53,11 +53,15 @@ public class FacebookContext {
         eventBus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
     }
 
-    public void sendReply(String textReply, QuickReplies... quickReplies) {
-        List<FacebookQuickReply> facebookQuickReplies = Arrays.stream(quickReplies).map(QuickReplies::getReply).collect(Collectors.toList());
+    public void sendReply(String textReply, List<QuickReply> quickReplies) {
+        List<FacebookQuickReply> facebookQuickReplies = quickReplies.stream().map(QuickReply::getReply).collect(Collectors.toList());
 
         FacebookReplyMessage replyMessage = FacebookUtils.replyMessage(message.getSender(), textReply, facebookQuickReplies);
         eventBus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
+    }
+
+    public void sendReply(String textReply, QuickReply... quickReplies) {
+        this.sendReply(textReply, Arrays.asList(quickReplies));
     }
 
     public void sendLocation(String locationName, Coordinates coordinates) {

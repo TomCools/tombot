@@ -4,11 +4,12 @@ import be.tomcools.tombot.model.facebook.Coordinates;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.Instant;
 import java.util.Date;
 
 @Data
 @AllArgsConstructor
 public class LocationDetail {
-    private Date retrieved;
+    private Instant retrieved;
     private Coordinates coordinates;
 }

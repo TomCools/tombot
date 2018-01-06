@@ -86,7 +86,7 @@ public class FacebookWebhook {
     }
 
     private void handleConversation(FacebookContext fbContext, ConversationContext conversationContext) {
-        new FacebookMessageHandler().handle(fbContext,conversationContext);
+        new FacebookMessageHandler(fbContext,conversationContext).handle();
     }
 
     private void sendVeloAnalytics(FacebookContext context) {
