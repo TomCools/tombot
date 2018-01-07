@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FacebookMessageAttachment {
-    private final static String GOOGLE_LOCATION_URL_FORMAT = "https://maps.googleapis.com/maps/api/staticmap?size=764x400&center=%s,%s&zoom=25&markers=%s,%s";
-    private final static String APPLE_LOCATION_URL_FORMAT = "http://maps.apple.com/maps?q=%s,%s&z=16";
+    private final static String GOOGLE_LOCATION_URL_FORMAT = "https://maps.googleapis.com/maps/api/staticmap?size=764x400&center=%s,%s&zoom=20&markers=%s,%s";
+    private final static String APPLE_LOCATION_URL_FORMAT = "http://maps.apple.com/maps?q=%s,%s&z=13";
 
     private String type;
     private AttachementPayloadContent payload;

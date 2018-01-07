@@ -69,7 +69,7 @@ public class FacebookMessageHandler {
                 }
             });
         }
-        if (msg.getText().equalsIgnoreCase("Previous Location")) {
+        if (msg.getText() != null && msg.getText().equalsIgnoreCase("Previous Location")) {
             Coordinates previousCoordinates = JSON.fromJson(msg.getQuick_reply().getPayload(), Coordinates.class);
             conversationContext.setLocation(new LocationDetail(Instant.now(), previousCoordinates));
         }

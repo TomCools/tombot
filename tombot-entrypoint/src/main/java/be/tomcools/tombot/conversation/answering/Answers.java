@@ -27,17 +27,17 @@ public class Answers {
     public static String closestLocationPickup(VeloStation station) {
         return random(
                 "Closest station for pickup is: " + station.getName(),
-                station.getCleanName() + " still has " + station.getAvailableBikes() + " bikes available for you.");
+                station.getCleanName() + " still has " + station.getAvailableBikes() + " bike(s) available for you.");
     }
 
     public static String closestLocationDropoff(VeloStation station) {
         return random("Closest station for dropoff is: " + station.getName(),
-                station.getCleanName() + " still has " + station.getAvailableSlots() + " slots available for leaving your bike.");
+                station.getCleanName() + " still has " + station.getAvailableSlots() + " slot(s) available for leaving your bike.");
     }
 
     public static String askForLocation() {
         return random("Where are you?",
-                "Where are you at?");
+                "Where are you at?", "I'm gonna need your location...");
     }
 
     private static String random(String... possibleAnswers) {

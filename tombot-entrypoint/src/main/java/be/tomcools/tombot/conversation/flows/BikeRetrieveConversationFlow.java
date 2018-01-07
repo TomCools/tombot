@@ -44,7 +44,7 @@ public class BikeRetrieveConversationFlow extends ConversationFlow {
     }
 
     private void handleBikeRetrieve(FacebookContext fbContext, Coordinates coordinates) {
-        fbContext.sendReply(Answers.findingPlaceToReturnBike());
+        fbContext.sendReply(Answers.findingPlaceToRetrieveBike());
         VeloData.openStations(fbContext, stream -> {
             Optional<VeloStation> closestStationWithAvailableBikes = stream
                     .sorted(SortOnDistance.from(coordinates))

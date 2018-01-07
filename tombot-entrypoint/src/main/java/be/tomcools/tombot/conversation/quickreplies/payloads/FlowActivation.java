@@ -4,8 +4,13 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
 public class FlowActivation {
-    private String type = "FLOW_ACTIVATION";
+    private String type;
     private String flowName;
+
+    @Builder
+    public FlowActivation(String flowName) {
+        this.type = "FLOW_ACTIVATION";
+        this.flowName = flowName;
+    }
 }

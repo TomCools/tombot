@@ -9,8 +9,8 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>tombot-entrypoint</module>
         <module>tombot-models</module>
+        <module>tombot-entrypoint</module>
     </modules>
 
     <dependencyManagement>
