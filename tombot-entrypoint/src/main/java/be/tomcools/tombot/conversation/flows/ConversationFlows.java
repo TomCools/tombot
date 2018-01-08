@@ -1,5 +1,8 @@
 package be.tomcools.tombot.conversation.flows;
 
+import be.tomcools.tombot.conversation.flows.implementations.BikeRetrieveConversationFlow;
+import be.tomcools.tombot.conversation.flows.implementations.BikeReturnConversationFlow;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;

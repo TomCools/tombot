@@ -1,6 +1,6 @@
 package be.tomcools.tombot.velo;
 
-import be.tomcools.tombot.conversation.answering.Answers;
+import be.tomcools.tombot.conversation.replies.text.Answers;
 import be.tomcools.tombot.facebook.FacebookContext;
 import com.google.gson.Gson;
 import io.vertx.core.AbstractVerticle;

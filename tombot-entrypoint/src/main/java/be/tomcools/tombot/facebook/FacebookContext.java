@@ -2,7 +2,7 @@ package be.tomcools.tombot.facebook;
 
 
 import be.tomcools.tombot.EventBusConstants;
-import be.tomcools.tombot.conversation.quickreplies.QuickReply;
+import be.tomcools.tombot.conversation.replies.quickreplies.QuickReply;
 import be.tomcools.tombot.model.facebook.messages.FacebookMessageMessaging;
 import be.tomcools.tombot.model.facebook.messages.FacebookModelFactory;
 import be.tomcools.tombot.model.facebook.messages.incomming.FacebookIncommingMessageContent;

@@ -1,10 +1,10 @@
 package be.tomcools.tombot.conversation.flows;
 
-import be.tomcools.tombot.conversation.answering.Answers;
 import be.tomcools.tombot.conversation.context.ConversationContext;
-import be.tomcools.tombot.conversation.quickreplies.QuickReplies;
-import be.tomcools.tombot.conversation.quickreplies.QuickReply;
-import be.tomcools.tombot.conversation.quickreplies.payloads.FlowActivation;
+import be.tomcools.tombot.conversation.replies.quickreplies.QuickReplies;
+import be.tomcools.tombot.conversation.replies.quickreplies.QuickReply;
+import be.tomcools.tombot.conversation.replies.quickreplies.payloads.FlowActivation;
+import be.tomcools.tombot.conversation.replies.text.Answers;
 import be.tomcools.tombot.facebook.FacebookContext;
 import be.tomcools.tombot.model.facebook.messages.outgoing.FacebookQuickReply;
 import be.tomcools.tombot.model.facebook.messages.partials.Coordinates;
@@ -14,7 +14,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import static be.tomcools.tombot.conversation.quickreplies.QuickReplies.LOCATION;
+import static be.tomcools.tombot.conversation.replies.quickreplies.QuickReplies.LOCATION;
 
 public abstract class ConversationFlow {
 

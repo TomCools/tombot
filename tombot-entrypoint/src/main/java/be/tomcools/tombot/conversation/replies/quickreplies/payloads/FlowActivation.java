@@ -1,4 +1,4 @@
-package be.tomcools.tombot.conversation.quickreplies.payloads;
+package be.tomcools.tombot.conversation.replies.quickreplies.payloads;
 
 import lombok.Builder;
 import lombok.Data;

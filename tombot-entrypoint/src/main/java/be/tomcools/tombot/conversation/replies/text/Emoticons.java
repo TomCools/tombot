@@ -1,4 +1,4 @@
-package be.tomcools.tombot.conversation;
+package be.tomcools.tombot.conversation.replies.text;
 
 public class Emoticons {
     public static String BIKE_DRIVING = "\uD83D\uDEB4\uD83C\uDFFB";

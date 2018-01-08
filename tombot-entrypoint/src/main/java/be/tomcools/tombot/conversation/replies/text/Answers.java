@@ -1,10 +1,10 @@
-package be.tomcools.tombot.conversation.answering;
+package be.tomcools.tombot.conversation.replies.text;
 
 import be.tomcools.tombot.velo.VeloStation;
 
 import java.util.Random;
 
-import static be.tomcools.tombot.conversation.Emoticons.*;
+import static be.tomcools.tombot.conversation.replies.text.Emoticons.*;
 
 public class Answers {
     private static final Random RAND = new Random();
