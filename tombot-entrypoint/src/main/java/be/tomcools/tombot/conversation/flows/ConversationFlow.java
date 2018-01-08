@@ -18,21 +18,30 @@ import static be.tomcools.tombot.conversation.quickreplies.QuickReplies.LOCATION
 
 public abstract class ConversationFlow {
 
-    private boolean isComplete;
+    private Instant timeStarted = Instant.now();
+    private Instant timeCompleted;
 
     public abstract HandleResult tryToHandle(FacebookContext fbContext, ConversationContext conversationContext);
 
     public boolean isComplete() {
-        return isComplete;
+        return timeCompleted != null;
     }
 
     public void complete() {
-        isComplete = true;
+        timeCompleted = Instant.now();
     }
 
-    abstract String getFlowActivatorMessage();
+    public abstract String getFlowActivatorMessage();
 
-    abstract String getFlowName();
+    public abstract String getFlowName();
+
+    public Instant getTimeStarted() {
+        return timeStarted;
+    }
+
+    public Instant getTimeCompleted() {
+        return timeCompleted;
+    }
 
     public QuickReply getFlowActivator() {
         return new QuickReply() {

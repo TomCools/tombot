@@ -8,16 +8,13 @@ import be.tomcools.tombot.velo.VeloData;
 import be.tomcools.tombot.velo.VeloStation;
 import be.tomcools.tombot.velo.datautils.SortOnDistance;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
-import static be.tomcools.tombot.conversation.flows.BikeRetrieveConversationFlow.State.NEW;
-import static be.tomcools.tombot.conversation.flows.BikeRetrieveConversationFlow.State.REQUESTED_COORDINATES;
-
 public class BikeRetrieveConversationFlow extends ConversationFlow {
-    private State state = NEW;
 
     @Override
-    String getFlowActivatorMessage() {
+    public String getFlowActivatorMessage() {
         return "Find a Bike";
     }
 
@@ -27,18 +24,14 @@ public class BikeRetrieveConversationFlow extends ConversationFlow {
     }
 
     @Override
-    public HandleResult tryToHandle(FacebookContext fbContext, ConversationContext conversationContext) {
-        //getting missing details
-        if (state == NEW) {
-            requestLocation(fbContext, conversationContext);
-            state = REQUESTED_COORDINATES;
-        } else if (state == REQUESTED_COORDINATES) {
-            if (conversationContext.getLocation() != null) {
-                handleBikeRetrieve(fbContext, conversationContext.getLocation().getCoordinates());
-                complete();
-            } else {
-                return HandleResult.builder().isSuccess(false).build();
-            }
+    public HandleResult tryToHandle(FacebookContext fbContext, ConversationContext convo) {
+        if (convo.locationIsNewerThan(1, ChronoUnit.MINUTES) &&
+                convo.previousFlowWasNot(this)) {
+            //if a location was presented in the last 60 seconds, just use that one.
+            handleBikeRetrieve(fbContext, convo.getLocation().getCoordinates());
+            complete();
+        } else {
+            requestLocation(fbContext, convo);
         }
         return HandleResult.builder().isSuccess(true).build();
     }
@@ -59,9 +52,5 @@ public class BikeRetrieveConversationFlow extends ConversationFlow {
                 fbContext.sendReply("Damn yo! No bikes available nowhere.");
             }
         });
-    }
-
-    enum State {
-        NEW, REQUESTED_COORDINATES;
     }
 }

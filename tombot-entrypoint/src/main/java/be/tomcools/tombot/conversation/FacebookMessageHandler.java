@@ -27,7 +27,7 @@ public class FacebookMessageHandler {
 
         appendConversationDetails(msg);
 
-        if (conversationContext.hasFlow()) {
+        if (conversationContext.hasActiveFlow()) {
             if (msg.hasQuickReply() && msg.getQuick_reply().isFlowActivationMessage()) {
                 //Request confirmation --> should be confirmation
                 switchFlowAndContinue(msg);
@@ -36,7 +36,7 @@ public class FacebookMessageHandler {
                 switchFlowAndContinue(msg);
             } else {
                 // NORMAL FLOW
-                ConversationFlow flow = conversationContext.getFlow();
+                ConversationFlow flow = conversationContext.getActiveFlow();
                 tryExecuteFlow(flow);
             }
         } else {
@@ -83,7 +83,7 @@ public class FacebookMessageHandler {
     private void switchFlowAndContinue(FacebookIncommingMessageContent msg) {
         FlowActivation flowActivation = JSON.fromJson(msg.getQuick_reply().getPayload(), FlowActivation.class);
         ConversationFlow flow = ConversationFlows.forName(flowActivation.getFlowName());
-        conversationContext.setFlow(flow);
+        conversationContext.setActiveFlow(flow);
         tryExecuteFlow(flow);
     }
 }
