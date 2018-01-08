@@ -1,9 +1,12 @@
 package be.tomcools.tombot;
 
 import be.tomcools.tombot.model.core.EventBusConstants;
-import be.tomcools.tombot.model.facebook.settings.GreetingSetting;
-import be.tomcools.tombot.model.facebook.settings.StartedButton;
+import be.tomcools.tombot.model.facebook.settings.Greeting;
+import be.tomcools.tombot.model.facebook.settings.Payload;
+import be.tomcools.tombot.model.facebook.settings.SettingConstants;
+import be.tomcools.tombot.model.facebook.settings.Settings;
 import be.tomcools.tombot.tools.JSON;
+import com.google.gson.JsonObject;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.http.HttpClient;
@@ -29,7 +32,7 @@ public class MessengerConnector extends AbstractVerticle {
 
         //TODO make configurable
         messagesEndpoint = "/v2.6/me/messages?" + accesstoken;
-        threadSettingsEndpoint = "/v2.6/me/thread_settings?" + accesstoken;
+        threadSettingsEndpoint = "/v2.6/me/messenger_profile?" + accesstoken;
 
 
         HttpClientOptions options = new HttpClientOptions()
@@ -75,18 +78,54 @@ public class MessengerConnector extends AbstractVerticle {
     }
 
     private void changeSettings() {
-        GreetingSetting greetingSetting = GreetingSetting.builder()
-                .greeting("Hi {{user_first_name}}, welcome to TomBot.").build();
-        sendSettings(greetingSetting);
-
-        StartedButton startButton = new StartedButton();
-        sendSettings(startButton);
+        Settings settings = Settings.builder()
+                .greeting(Greeting.builder()
+                        .locale("default")
+                        .text("Hi {{user_first_name}}, welcome to TomBot.")
+                        .build())
+                .gettingStartedPayload(Payload.builder().payload(SettingConstants.GET_STARTED).build())
+                .build();
+        sendSettings(settings);
     }
 
     private void sendSettings(Object settings) {
+        String settingsJson = JSON.toJson(settings);
+        LOG.info("Sending Settings: " + settingsJson);
         client.post(threadSettingsEndpoint, response -> {
-            LOG.info("Received response with status code " + response.statusCode());
-            response.bodyHandler(b -> LOG.debug("Received response with status code " + b.toString()));
-        }).putHeader("content-type", "application/json").end(JSON.toJson(settings));
+            LOG.info("Received response with status code " + response.statusCode() + " for setting changes.");
+            response.bodyHandler(b -> {
+                LOG.info("Updated settings result: " + b.toString());
+                if (!b.toString().contains("success")) {
+                    LOG.error("Error while updating settings.");
+                }
+                verifySettings(settingsJson);
+            });
+        }).putHeader("content-type", "application/json").end(settingsJson);
+    }
+
+    private void verifySettings(String sentSettings) {
+        JsonObject propertiesObj = JSON.fromJson(sentSettings, JsonObject.class);
+
+        String properties = propertiesObj
+                .entrySet().stream()
+                .map(Map.Entry::getKey).reduce("", (s, s2) -> {
+                    s += "," + s2;
+                    return s;
+                }).replaceFirst(",", "");
+
+        String requestUrl = String.format("%s&fields=%s", threadSettingsEndpoint, properties);
+
+        client.get(requestUrl, response -> {
+            LOG.info("Received response with status code " + response.statusCode() + " for validating setting changes.");
+            response.bodyHandler(b -> {
+                JsonObject responseObject = JSON.fromJson(b.toString(), JsonObject.class);
+                if (!sentSettings.equalsIgnoreCase(responseObject.get("data").getAsString())) {
+                    LOG.warn(String.format("Settings not updated succesfully!%sExpected: %s%s Actual %s",
+                            System.lineSeparator(), sentSettings, System.lineSeparator(), b.toString()));
+                } else {
+                    LOG.info("Current Settings: " + b.toString());
+                }
+            });
+        }).end();
     }
 }
