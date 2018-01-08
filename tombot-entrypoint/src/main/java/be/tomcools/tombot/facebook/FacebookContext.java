@@ -1,10 +1,10 @@
-package be.tomcools.tombot.endpoints;
+package be.tomcools.tombot.facebook;
 
 
 import be.tomcools.tombot.EventBusConstants;
-import be.tomcools.tombot.FacebookUtils;
 import be.tomcools.tombot.conversation.quickreplies.QuickReply;
 import be.tomcools.tombot.model.facebook.messages.FacebookMessageMessaging;
+import be.tomcools.tombot.model.facebook.messages.FacebookModelFactory;
 import be.tomcools.tombot.model.facebook.messages.incomming.FacebookIncommingMessageContent;
 import be.tomcools.tombot.model.facebook.messages.outgoing.FacebookQuickReply;
 import be.tomcools.tombot.model.facebook.messages.outgoing.FacebookReplyMessage;
@@ -55,14 +55,14 @@ public class FacebookContext {
     }
 
     public void sendReply(String textReply) {
-        FacebookReplyMessage replyMessage = FacebookUtils.replyMessage(message.getSender(), textReply);
+        FacebookReplyMessage replyMessage = FacebookModelFactory.replyMessage(message.getSender(), textReply);
         eventBus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
     }
 
     public void sendReply(String textReply, List<QuickReply> quickReplies) {
         List<FacebookQuickReply> facebookQuickReplies = quickReplies.stream().map(QuickReply::getReply).collect(Collectors.toList());
 
-        FacebookReplyMessage replyMessage = FacebookUtils.replyMessage(message.getSender(), textReply, facebookQuickReplies);
+        FacebookReplyMessage replyMessage = FacebookModelFactory.replyMessage(message.getSender(), textReply, facebookQuickReplies);
         eventBus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
     }
 
@@ -71,17 +71,17 @@ public class FacebookContext {
     }
 
     public void sendLocation(String locationName, Coordinates coordinates) {
-        FacebookReplyMessage replyMessage = FacebookUtils.replyLocation(message.getSender(), locationName, coordinates);
+        FacebookReplyMessage replyMessage = FacebookModelFactory.replyLocation(message.getSender(), locationName, coordinates);
         eventBus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
     }
 
     public void sendLocation(Coordinates coordinates) {
-        FacebookReplyMessage replyMessage = FacebookUtils.replyLocation(message.getSender(), coordinates);
+        FacebookReplyMessage replyMessage = FacebookModelFactory.replyLocation(message.getSender(), coordinates);
         eventBus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
     }
 
     public void senderAction(SenderAction action) {
-        FacebookReplyMessage replyMessage = FacebookUtils.senderAction(message.getSender(), action);
+        FacebookReplyMessage replyMessage = FacebookModelFactory.senderAction(message.getSender(), action);
         eventBus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
     }
 

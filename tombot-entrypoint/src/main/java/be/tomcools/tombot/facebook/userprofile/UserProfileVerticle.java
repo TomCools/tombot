@@ -1,4 +1,4 @@
-package be.tomcools.tombot.userprofile;
+package be.tomcools.tombot.facebook.userprofile;
 
 import be.tomcools.tombot.EventBusConstants;
 import io.vertx.core.AbstractVerticle;

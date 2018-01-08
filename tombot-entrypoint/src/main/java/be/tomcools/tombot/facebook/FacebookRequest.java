@@ -1,4 +1,4 @@
-package be.tomcools.tombot.endpoints;
+package be.tomcools.tombot.facebook;
 
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;

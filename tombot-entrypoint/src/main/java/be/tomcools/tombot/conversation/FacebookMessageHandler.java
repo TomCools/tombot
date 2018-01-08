@@ -6,7 +6,7 @@ import be.tomcools.tombot.conversation.flows.ConversationFlow;
 import be.tomcools.tombot.conversation.flows.ConversationFlows;
 import be.tomcools.tombot.conversation.quickreplies.QuickReply;
 import be.tomcools.tombot.conversation.quickreplies.payloads.FlowActivation;
-import be.tomcools.tombot.endpoints.FacebookContext;
+import be.tomcools.tombot.facebook.FacebookContext;
 import be.tomcools.tombot.model.facebook.messages.incomming.FacebookIncommingMessageContent;
 import be.tomcools.tombot.model.facebook.messages.partials.Coordinates;
 import be.tomcools.tombot.tools.JSON;

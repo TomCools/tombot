@@ -2,7 +2,7 @@ package be.tomcools.tombot.conversation.flows;
 
 import be.tomcools.tombot.conversation.answering.Answers;
 import be.tomcools.tombot.conversation.context.ConversationContext;
-import be.tomcools.tombot.endpoints.FacebookContext;
+import be.tomcools.tombot.facebook.FacebookContext;
 import be.tomcools.tombot.model.facebook.messages.partials.Coordinates;
 import be.tomcools.tombot.velo.VeloData;
 import be.tomcools.tombot.velo.VeloStation;

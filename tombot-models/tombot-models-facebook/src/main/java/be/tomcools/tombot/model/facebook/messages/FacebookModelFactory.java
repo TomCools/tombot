@@ -1,4 +1,4 @@
-package be.tomcools.tombot;
+package be.tomcools.tombot.model.facebook.messages;
 
 import be.tomcools.tombot.model.facebook.messages.attachement.FacebookMessageAttachment;
 import be.tomcools.tombot.model.facebook.messages.outgoing.FacebookOutgoingMessageContent;
@@ -10,7 +10,7 @@ import be.tomcools.tombot.model.facebook.messages.partials.SenderAction;
 
 import java.util.List;
 
-public class FacebookUtils {
+public class FacebookModelFactory {
     public static FacebookReplyMessage replyMessage(FacebookIdentifier recipient, String message) {
         return FacebookReplyMessage.builder()
                 .messaging_type("RESPONSE")

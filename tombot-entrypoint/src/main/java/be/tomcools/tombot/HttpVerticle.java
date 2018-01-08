@@ -1,6 +1,6 @@
 package be.tomcools.tombot;
 
-import be.tomcools.tombot.endpoints.FacebookWebhook;
+import be.tomcools.tombot.facebook.FacebookWebhook;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
