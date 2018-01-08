@@ -1,6 +1,6 @@
 package be.tomcools.tombot.userprofile;
 
-import be.tomcools.tombot.model.core.EventBusConstants;
+import be.tomcools.tombot.EventBusConstants;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;

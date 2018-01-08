@@ -1,6 +1,6 @@
 package be.tomcools.tombot.velo;
 
-import be.tomcools.tombot.model.facebook.Coordinates;
+import be.tomcools.tombot.model.facebook.messages.partials.Coordinates;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

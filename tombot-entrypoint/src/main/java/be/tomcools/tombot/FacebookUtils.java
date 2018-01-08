@@ -1,6 +1,12 @@
 package be.tomcools.tombot;
 
-import be.tomcools.tombot.model.facebook.*;
+import be.tomcools.tombot.model.facebook.messages.attachement.FacebookMessageAttachment;
+import be.tomcools.tombot.model.facebook.messages.outgoing.FacebookOutgoingMessageContent;
+import be.tomcools.tombot.model.facebook.messages.outgoing.FacebookQuickReply;
+import be.tomcools.tombot.model.facebook.messages.outgoing.FacebookReplyMessage;
+import be.tomcools.tombot.model.facebook.messages.partials.Coordinates;
+import be.tomcools.tombot.model.facebook.messages.partials.FacebookIdentifier;
+import be.tomcools.tombot.model.facebook.messages.partials.SenderAction;
 
 import java.util.List;
 

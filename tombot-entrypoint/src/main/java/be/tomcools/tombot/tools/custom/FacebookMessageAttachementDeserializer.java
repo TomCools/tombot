@@ -1,8 +1,8 @@
 package be.tomcools.tombot.tools.custom;
 
-import be.tomcools.tombot.model.facebook.FacebookMessageAttachment;
-import be.tomcools.tombot.model.facebook.attachement.AttachementPayloadContent;
-import be.tomcools.tombot.model.facebook.attachement.AttachementTypes;
+import be.tomcools.tombot.model.facebook.messages.attachement.AttachementTypes;
+import be.tomcools.tombot.model.facebook.messages.attachement.FacebookMessageAttachment;
+import be.tomcools.tombot.model.facebook.messages.attachement.payloads.AttachementPayloadContent;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;

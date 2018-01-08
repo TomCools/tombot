@@ -1,5 +1,6 @@
 package be.tomcools.tombot.model.facebook;
 
+import be.tomcools.tombot.model.facebook.messages.incomming.FacebookIncommingMessageContent;
 import com.google.gson.Gson;
 import org.junit.Test;
 

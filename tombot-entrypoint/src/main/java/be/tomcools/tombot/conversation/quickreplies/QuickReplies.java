@@ -1,7 +1,7 @@
 package be.tomcools.tombot.conversation.quickreplies;
 
-import be.tomcools.tombot.model.facebook.Coordinates;
-import be.tomcools.tombot.model.facebook.FacebookQuickReply;
+import be.tomcools.tombot.model.facebook.messages.outgoing.FacebookQuickReply;
+import be.tomcools.tombot.model.facebook.messages.partials.Coordinates;
 import be.tomcools.tombot.tools.JSON;
 
 public enum QuickReplies implements QuickReply {

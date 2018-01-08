@@ -1,6 +1,5 @@
 package be.tomcools.tombot;
 
-import be.tomcools.tombot.model.core.EventBusConstants;
 import be.tomcools.tombot.model.facebook.settings.Greeting;
 import be.tomcools.tombot.model.facebook.settings.Payload;
 import be.tomcools.tombot.model.facebook.settings.SettingConstants;

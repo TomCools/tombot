@@ -1,6 +1,6 @@
 package be.tomcools.tombot.velo.datautils;
 
-import be.tomcools.tombot.model.facebook.Coordinates;
+import be.tomcools.tombot.model.facebook.messages.partials.Coordinates;
 import be.tomcools.tombot.velo.DistanceCalculator;
 import be.tomcools.tombot.velo.VeloStation;
 

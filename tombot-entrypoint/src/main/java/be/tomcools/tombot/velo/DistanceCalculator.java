@@ -1,6 +1,6 @@
 package be.tomcools.tombot.velo;
 
-import be.tomcools.tombot.model.facebook.Coordinates;
+import be.tomcools.tombot.model.facebook.messages.partials.Coordinates;
 
 /**
  * Calculation based on http://www.movable-type.co.uk/scripts/latlong.html

@@ -9,7 +9,6 @@
     </parent>
     <packaging>pom</packaging>
     <modules>
-        <module>tombot-models-core</module>
         <module>tombot-models-facebook</module>
     </modules>
     <modelVersion>4.0.0</modelVersion>

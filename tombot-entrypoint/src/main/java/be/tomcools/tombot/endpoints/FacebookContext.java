@@ -1,10 +1,16 @@
 package be.tomcools.tombot.endpoints;
 
 
+import be.tomcools.tombot.EventBusConstants;
 import be.tomcools.tombot.FacebookUtils;
 import be.tomcools.tombot.conversation.quickreplies.QuickReply;
-import be.tomcools.tombot.model.core.EventBusConstants;
-import be.tomcools.tombot.model.facebook.*;
+import be.tomcools.tombot.model.facebook.messages.FacebookMessageMessaging;
+import be.tomcools.tombot.model.facebook.messages.incomming.FacebookIncommingMessageContent;
+import be.tomcools.tombot.model.facebook.messages.outgoing.FacebookQuickReply;
+import be.tomcools.tombot.model.facebook.messages.outgoing.FacebookReplyMessage;
+import be.tomcools.tombot.model.facebook.messages.partials.Coordinates;
+import be.tomcools.tombot.model.facebook.messages.partials.FacebookIdentifier;
+import be.tomcools.tombot.model.facebook.messages.partials.SenderAction;
 import com.google.gson.Gson;
 import io.vertx.core.eventbus.EventBus;
 import lombok.Builder;
