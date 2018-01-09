@@ -11,6 +11,7 @@ import be.tomcools.tombot.model.facebook.messages.partials.Coordinates;
 import be.tomcools.tombot.tools.JSON;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,8 +56,8 @@ public abstract class ConversationFlow {
 
     protected void requestLocation(FacebookContext fbContext, ConversationContext conversationContext) {
         List<QuickReply> quickReplies = new ArrayList<>();
-        if (conversationContext.getLocation() != null && conversationContext.getLocation().getRetrieved().isAfter(Instant.now().minusSeconds(300))) {
-            //it is less than 5 minutes ago since your last location.
+        if (conversationContext.getLocation() != null && conversationContext.locationIsNewerThan(10, ChronoUnit.MINUTES)) {
+            //it is less than 10 minutes ago since your last location.
             Coordinates coordinates = conversationContext.getLocation().getCoordinates();
             quickReplies.add(QuickReplies.previousLocation(coordinates));
         }
