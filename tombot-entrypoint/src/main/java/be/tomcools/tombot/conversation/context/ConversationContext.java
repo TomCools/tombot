@@ -43,7 +43,7 @@ public class ConversationContext {
     }
 
     public boolean locationIsNewerThan(int amount, ChronoUnit unit) {
-        return getLocation().getRetrieved().isAfter(Instant.now().minus(amount, unit));
+        return hasLocation() && getLocation().getRetrieved().isAfter(Instant.now().minus(amount, unit));
     }
 
     public boolean previousFlowWasNot(ConversationFlow flow) {
