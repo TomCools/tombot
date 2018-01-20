@@ -4,10 +4,13 @@ import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class FacebookRequest {
+    private static final Logger LOG = LoggerFactory.getLogger(FacebookRequest.class);
     private HttpServerRequest r;
 
     public boolean isSubscribeRequest() {
@@ -22,7 +25,8 @@ public class FacebookRequest {
         try {
             r.bodyHandler(handler);
             response.setStatusCode(200).end();
-        } catch(Exception ex) {
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage());
             response.setStatusCode(500).end(ex.getMessage());
         }
     }
