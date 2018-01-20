@@ -19,6 +19,7 @@ public class HttpVerticle extends AbstractVerticle {
 
         Instant startupTime = Instant.now();
         router.route("/*").handler(r -> {
+            LOG.info("Alive call recieved!");
             r.request().response().end("I'm Alive! since: " + startupTime.toString());
         });
 
