@@ -28,14 +28,10 @@ public class FacebookWebhook {
             request.respondToRequest();
         } else {
             request.handleBody(b -> {
-                try {
-                    JsonObject jsonObject = b.toJsonObject();
-                    LOG.info("Got Request from Facebook: " + jsonObject);
-                    FacebookMessage message = JSON.fromJson(jsonObject.toString(), FacebookMessage.class);
-                    handleMessage(message);
-                } catch (Exception ex) {
-                    route.response().end("Not the request I was expecting...");
-                }
+                LOG.info("Got Request from Facebook: " + b.toString());
+                JsonObject jsonObject = b.toJsonObject();
+                FacebookMessage message = JSON.fromJson(jsonObject.toString(), FacebookMessage.class);
+                handleMessage(message);
             });
         }
     }
