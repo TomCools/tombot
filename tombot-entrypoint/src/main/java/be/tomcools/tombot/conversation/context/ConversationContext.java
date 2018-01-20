@@ -21,6 +21,7 @@ public class ConversationContext {
     public ConversationContext() {
         this.lastChat = new Date();
         this.firstContact = true;
+        this.pastFlows = new Stack<>();
     }
 
     public boolean hasActiveFlow() {
@@ -47,5 +48,9 @@ public class ConversationContext {
 
     public boolean previousFlowWasNot(ConversationFlow flow) {
         return getPastFlows().peek().getFlowName().equals(flow.getFlowName());
+    }
+
+    public boolean hasLocation() {
+        return getLocation() != null;
     }
 }

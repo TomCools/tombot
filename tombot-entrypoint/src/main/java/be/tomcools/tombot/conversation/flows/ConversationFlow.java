@@ -56,7 +56,7 @@ public abstract class ConversationFlow {
 
     protected void requestLocation(FacebookContext fbContext, ConversationContext conversationContext) {
         List<QuickReply> quickReplies = new ArrayList<>();
-        if (conversationContext.getLocation() != null && conversationContext.locationIsNewerThan(10, ChronoUnit.MINUTES)) {
+        if (conversationContext.hasLocation() && conversationContext.locationIsNewerThan(10, ChronoUnit.MINUTES)) {
             //it is less than 10 minutes ago since your last location.
             Coordinates coordinates = conversationContext.getLocation().getCoordinates();
             quickReplies.add(QuickReplies.previousLocation(coordinates));
