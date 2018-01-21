@@ -20,16 +20,16 @@ import static be.tomcools.tombot.conversation.replies.quickreplies.QuickReplies.
 public abstract class ConversationFlow {
 
     private Instant timeStarted = Instant.now();
-    private Instant timeCompleted;
+    private Instant timeStopped;
 
     public abstract HandleResult tryToHandle(FacebookContext fbContext, ConversationContext conversationContext);
 
     public boolean isComplete() {
-        return timeCompleted != null;
+        return timeStopped != null;
     }
 
     public void complete() {
-        timeCompleted = Instant.now();
+        timeStopped = Instant.now();
     }
 
     public abstract String getFlowActivatorMessage();
@@ -40,8 +40,8 @@ public abstract class ConversationFlow {
         return timeStarted;
     }
 
-    public Instant getTimeCompleted() {
-        return timeCompleted;
+    public Instant getTimeStopped() {
+        return timeStopped;
     }
 
     public QuickReply getFlowActivator() {
@@ -55,6 +55,10 @@ public abstract class ConversationFlow {
     }
 
     protected void requestLocation(FacebookContext fbContext, ConversationContext conversationContext) {
+        this.requestLocation(Answers.askForLocation(), fbContext, conversationContext);
+    }
+
+    protected void requestLocation(String text, FacebookContext fbContext, ConversationContext conversationContext) {
         List<QuickReply> quickReplies = new ArrayList<>();
         if (conversationContext.hasLocation() && conversationContext.locationIsNewerThan(10, ChronoUnit.MINUTES)) {
             //it is less than 10 minutes ago since your last location.
@@ -62,8 +66,6 @@ public abstract class ConversationFlow {
             quickReplies.add(QuickReplies.previousLocation(coordinates));
         }
         quickReplies.add(LOCATION);
-        fbContext.sendReply(Answers.askForLocation(), quickReplies);
+        fbContext.sendReply(text, quickReplies);
     }
-
-
 }

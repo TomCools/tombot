@@ -1,13 +1,20 @@
 package be.tomcools.tombot.conversation.context;
 
 import be.tomcools.tombot.conversation.flows.ConversationFlow;
+import be.tomcools.tombot.conversation.replies.quickreplies.QuickReplies;
+import be.tomcools.tombot.conversation.replies.quickreplies.QuickReply;
+import be.tomcools.tombot.model.facebook.messages.partials.Coordinates;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Stack;
+
+import static be.tomcools.tombot.conversation.replies.quickreplies.QuickReplies.LOCATION;
 
 @Setter
 @Getter
@@ -62,5 +69,16 @@ public class ConversationContext {
 
     public boolean hasLocation() {
         return getLocation() != null;
+    }
+
+    public List<QuickReply> requestLocationQuickReplies(ConversationContext conversationContext) {
+        List<QuickReply> quickReplies = new ArrayList<>();
+        if (conversationContext.hasLocation() && conversationContext.locationIsNewerThan(10, ChronoUnit.MINUTES)) {
+            //it is less than 10 minutes ago since your last location.
+            Coordinates coordinates = conversationContext.getLocation().getCoordinates();
+            quickReplies.add(QuickReplies.previousLocation(coordinates));
+        }
+        quickReplies.add(LOCATION);
+        return quickReplies;
     }
 }

@@ -28,7 +28,7 @@ public class BikeRetrieveConversationFlow extends ConversationFlow {
     @Override
     public HandleResult tryToHandle(FacebookContext fbContext, ConversationContext convo) {
         if (convo.previousFlowWas(this) && !fbContext.getMessage().hasLocation()) {
-            requestLocation(fbContext, convo);
+            requestLocation(Answers.askLocationSameFlow(), fbContext, convo);
         } else if (convo.locationIsOlderThan(1, ChronoUnit.MINUTES)) {
             requestLocation(fbContext, convo);
         } else {
