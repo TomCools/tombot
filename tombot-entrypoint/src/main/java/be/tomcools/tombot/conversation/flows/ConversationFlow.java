@@ -17,7 +17,7 @@ import java.util.List;
 
 public abstract class ConversationFlow {
 
-    private Vertx vertx = Vertx.vertx();
+    private static final Vertx vertx = Vertx.vertx();
     private Instant timeStarted = Instant.now();
     private Instant timeStopped;
 
@@ -67,6 +67,6 @@ public abstract class ConversationFlow {
     }
 
     protected void doDelayed(ActionFunctionalInterface handler, int miliseconds) {
-        vertx.setTimer(miliseconds, (i) -> handler.doSomething());
+        vertx.setTimer(miliseconds, (i) -> handler.doIt());
     }
 }

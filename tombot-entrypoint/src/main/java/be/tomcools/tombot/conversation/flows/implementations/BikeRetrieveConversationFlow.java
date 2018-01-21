@@ -26,16 +26,37 @@ public class BikeRetrieveConversationFlow extends ConversationFlow {
         return "BIKE_RETRIEVE";
     }
 
+    private boolean locationRequested = false;
+
     @Override
     public HandleResult tryToHandle(FacebookContext fbContext, ConversationContext convo) {
+        if (!locationRequested) {
+            return handleInitialTime(fbContext, convo);
+        } else {
+            if (!fbContext.getMessage().hasLocation()) {
+                return HandleResult.builder().
+                        isSuccess(false)
+                        .backupAction(() -> {
+                            fbContext.sendReply("Let's try this again...", QuickReplies.location());
+                        }).build();
+            } else {
+                handleBikeRetrieve(fbContext, convo.getLocation().getCoordinates());
+                return HandleResult.SUCCES;
+            }
+        }
+
+    }
+
+    private HandleResult handleInitialTime(FacebookContext fbContext, ConversationContext convo) {
         if (convo.previousFlowWas(this) && !fbContext.getMessage().hasLocation()) {
             requestLocation(Answers.askLocationSameFlow(), fbContext, convo);
+            this.locationRequested = true;
         } else if (convo.locationIsOlderThan(1, ChronoUnit.MINUTES)) {
             requestLocation(fbContext, convo);
+            this.locationRequested = true;
         } else {
             //if a location was presented in the last 60 seconds, just use that one.
             handleBikeRetrieve(fbContext, convo.getLocation().getCoordinates());
-            complete();
         }
         return HandleResult.builder().
                 isSuccess(true).
@@ -60,5 +81,6 @@ public class BikeRetrieveConversationFlow extends ConversationFlow {
                 fbContext.sendReply("Damn yo! No bikes available nowhere.");
             }
         });
+        complete();
     }
 }

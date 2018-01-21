@@ -43,9 +43,13 @@ public class Answers {
     private static String random(String... possibleAnswers) {
         return possibleAnswers[RAND.nextInt(possibleAnswers.length)];
     }
-    
+
     public static String askLocationSameFlow() {
         return random("Oh, but we did this already... but fine... " + askForLocation(),
                 "You want to try again... ok.. from which location do we start now?");
+    }
+
+    public static String answerGreeting() {
+        return random("Hi there! :) ", "Hello! " + Emoticons.BIKE_DRIVING);
     }
 }

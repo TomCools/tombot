@@ -4,8 +4,11 @@ import be.tomcools.tombot.conversation.context.ConversationContext;
 import be.tomcools.tombot.conversation.context.LocationDetail;
 import be.tomcools.tombot.conversation.flows.ConversationFlow;
 import be.tomcools.tombot.conversation.flows.ConversationFlows;
+import be.tomcools.tombot.conversation.flows.HandleResult;
 import be.tomcools.tombot.conversation.replies.quickreplies.QuickReply;
 import be.tomcools.tombot.conversation.replies.quickreplies.payloads.FlowActivation;
+import be.tomcools.tombot.conversation.replies.text.Answers;
+import be.tomcools.tombot.conversation.replies.text.Emoticons;
 import be.tomcools.tombot.facebook.FacebookContext;
 import be.tomcools.tombot.model.facebook.messages.incomming.FacebookIncommingMessageContent;
 import be.tomcools.tombot.model.facebook.messages.partials.Coordinates;
@@ -44,19 +47,31 @@ public class FacebookMessageHandler {
                 //Activate flow and ask next details
                 switchFlowAndContinue(msg);
             } else {
-                presentFlowOptions();
+                //Try NLP to determine correct flow or else
+                if (msg.isGreeting()) {
+                    fbContext.sendReply(Answers.answerGreeting() + "How can I help you today?", allFlowOptions());
+                } else if (msg.isThanks()) {
+                    fbContext.sendReply("You are welcome " + Emoticons.BIKE_DRIVING);
+                }
             }
         }
     }
 
     private void tryExecuteFlow(ConversationFlow flow) {
-        if (flow.tryToHandle(fbContext, conversationContext).isSuccess()) {
+        HandleResult flowHandleResult = flow.tryToHandle(fbContext, conversationContext);
+        if (flowHandleResult.isSuccess()) {
             //YEEAH!
             if (flow.isComplete()) {
                 conversationContext.stopFlow();
             }
         } else {
-            fbContext.sendReply("No idea what to say to this...");
+            //->try nlp to detect  cancel/trolling/flowswitching
+            //->Either give up or try backup handling.
+            if (flowHandleResult.hasBackupAction()) {
+                flowHandleResult.getBackupAction().doIt();
+            } else {
+                fbContext.sendReply("No idea what to say to this...");
+            }
         }
     }
 
@@ -77,9 +92,8 @@ public class FacebookMessageHandler {
         }
     }
 
-    private void presentFlowOptions() {
-        List<QuickReply> quickReplies = ConversationFlows.all().stream().map(ConversationFlow::getFlowActivator).collect(Collectors.toList());
-        fbContext.sendReply("What do you want to do?", quickReplies);
+    private List<QuickReply> allFlowOptions() {
+        return ConversationFlows.all().stream().map(ConversationFlow::getFlowActivator).collect(Collectors.toList());
     }
 
     private void switchFlowAndContinue(FacebookIncommingMessageContent msg) {

@@ -1,7 +1,9 @@
 package be.tomcools.tombot.tools;
 
 import be.tomcools.tombot.model.facebook.messages.attachement.FacebookMessageAttachment;
+import be.tomcools.tombot.model.facebook.messages.incomming.nlp.FacebookNlp;
 import be.tomcools.tombot.tools.custom.FacebookMessageAttachementDeserializer;
+import be.tomcools.tombot.tools.custom.FacebookNlpDeserializer;
 import com.google.gson.*;
 import com.google.gson.internal.Excluder;
 import com.google.gson.reflect.TypeToken;
@@ -16,6 +18,7 @@ import java.lang.reflect.Type;
 public class JSON {
     private static Gson GSON = new GsonBuilder()
             .registerTypeAdapter(FacebookMessageAttachment.class, new FacebookMessageAttachementDeserializer())
+            .registerTypeAdapter(FacebookNlp.class, new FacebookNlpDeserializer())
             .create();
 
     public static String toJson(Object o) {

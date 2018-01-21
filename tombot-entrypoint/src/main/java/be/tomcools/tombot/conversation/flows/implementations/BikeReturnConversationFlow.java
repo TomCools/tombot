@@ -17,6 +17,8 @@ import java.util.Optional;
 
 public class BikeReturnConversationFlow extends ConversationFlow {
 
+    private boolean locationRequested = false;
+
     @Override
     public String getFlowActivatorMessage() {
         return "Return a Bike";
@@ -29,14 +31,35 @@ public class BikeReturnConversationFlow extends ConversationFlow {
 
     @Override
     public HandleResult tryToHandle(FacebookContext fbContext, ConversationContext convo) {
+        if (!locationRequested) {
+            return handleInitialTime(fbContext, convo);
+        } else {
+            if (!fbContext.getMessage().hasLocation()) {
+                return HandleResult.builder().
+                        isSuccess(false)
+                        .backupAction(() -> {
+                            fbContext.sendReply("Let's try this again...", QuickReplies.location());
+                        }).build();
+            } else {
+                return executeCorrect(fbContext, convo);
+            }
+        }
+    }
+
+    private HandleResult executeCorrect(FacebookContext fbContext, ConversationContext convo) {
+        handleBikeReturn(fbContext, convo.getLocation().getCoordinates());
+        return HandleResult.SUCCES;
+    }
+
+    private HandleResult handleInitialTime(FacebookContext fbContext, ConversationContext convo) {
         if (convo.previousFlowWas(this) && !fbContext.getMessage().hasLocation()) {
             requestLocation(Answers.askLocationSameFlow(), fbContext, convo);
+            this.locationRequested = true;
         } else if (convo.locationIsOlderThan(1, ChronoUnit.MINUTES)) {
             requestLocation(fbContext, convo);
+            this.locationRequested = true;
         } else {
-            //if a location was presented in the last 60 seconds, just use that one.
-            handleBikeReturn(fbContext, convo.getLocation().getCoordinates());
-            complete();
+            return executeCorrect(fbContext, convo);
         }
         return HandleResult.builder().
                 isSuccess(true).
@@ -62,5 +85,6 @@ public class BikeReturnConversationFlow extends ConversationFlow {
                 fbContext.sendReply("Damn yo! All nearby station are full.");
             }
         }));
+        complete();
     }
 }
