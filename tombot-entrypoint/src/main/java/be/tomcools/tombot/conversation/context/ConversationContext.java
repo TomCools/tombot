@@ -38,16 +38,26 @@ public class ConversationContext {
     }
 
     private void archiveFlow() {
-        pastFlows.push(this.activeFlow);
-        this.activeFlow = null;
+        if (this.activeFlow != null) {
+            pastFlows.push(this.activeFlow);
+            this.activeFlow = null;
+        }
     }
 
     public boolean locationIsNewerThan(int amount, ChronoUnit unit) {
         return hasLocation() && getLocation().getRetrieved().isAfter(Instant.now().minus(amount, unit));
     }
 
+    public boolean locationIsOlderThan(int amount, ChronoUnit unit) {
+        return !locationIsNewerThan(amount, unit);
+    }
+
     public boolean previousFlowWasNot(ConversationFlow flow) {
-        return getPastFlows().peek().getFlowName().equals(flow.getFlowName());
+        return !previousFlowWas(flow);
+    }
+
+    public boolean previousFlowWas(ConversationFlow flow) {
+        return !getPastFlows().empty() && getPastFlows().peek().getFlowName().equals(flow.getFlowName());
     }
 
     public boolean hasLocation() {

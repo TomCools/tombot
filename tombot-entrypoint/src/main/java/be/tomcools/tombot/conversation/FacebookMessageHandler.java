@@ -66,12 +66,14 @@ public class FacebookMessageHandler {
                 if (facebookMessageAttachment.isLocation()) {
                     Coordinates coordinates = facebookMessageAttachment.getLocation();
                     conversationContext.setLocation(new LocationDetail(Instant.now(), coordinates));
+                    msg.setHasLocation(true);
                 }
             });
         }
         if (msg.getText() != null && msg.getText().equalsIgnoreCase("Previous Location")) {
             Coordinates previousCoordinates = JSON.fromJson(msg.getQuick_reply().getPayload(), Coordinates.class);
             conversationContext.setLocation(new LocationDetail(Instant.now(), previousCoordinates));
+            msg.setHasLocation(true);
         }
     }
 

@@ -28,15 +28,18 @@ public class BikeReturnConversationFlow extends ConversationFlow {
 
     @Override
     public HandleResult tryToHandle(FacebookContext fbContext, ConversationContext convo) {
-        if (convo.locationIsNewerThan(1, ChronoUnit.MINUTES) &&
-                convo.previousFlowWasNot(this)) {
-            //if a location was presented in the last 60 seconds in a different flow, just use that one.
+        if (convo.previousFlowWas(this) && !fbContext.getMessage().hasLocation()) {
+            requestLocation(fbContext, convo);
+        } else if (convo.locationIsOlderThan(1, ChronoUnit.MINUTES)) {
+            requestLocation(fbContext, convo);
+        } else {
+            //if a location was presented in the last 60 seconds, just use that one.
             handleBikeReturn(fbContext, convo.getLocation().getCoordinates());
             complete();
-        } else {
-            requestLocation(fbContext, convo);
         }
-        return HandleResult.builder().isSuccess(true).build();
+        return HandleResult.builder().
+                isSuccess(true).
+                build();
     }
 
     private void handleBikeReturn(FacebookContext fbContext, Coordinates coordinates) {
