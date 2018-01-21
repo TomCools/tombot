@@ -27,6 +27,14 @@ public class FacebookModelFactory {
                 .build();
     }
 
+    public static FacebookReplyMessage replyMessage(FacebookIdentifier recipient, List<FacebookQuickReply> quickReplies) {
+        return FacebookReplyMessage.builder()
+                .messaging_type("RESPONSE")
+                .recipient(recipient)
+                .message(FacebookOutgoingMessageContent.builder().text(null).quick_replies(quickReplies).build())
+                .build();
+    }
+
     public static FacebookReplyMessage replyLocation(FacebookIdentifier recipient, Coordinates coordinates) {
         return replyLocation(recipient, "", coordinates);
     }

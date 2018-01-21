@@ -18,6 +18,7 @@ import lombok.Builder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Builder
 public class FacebookContext {
@@ -61,8 +62,14 @@ public class FacebookContext {
 
     public void sendReply(String textReply, List<QuickReply> quickReplies) {
         List<FacebookQuickReply> facebookQuickReplies = quickReplies.stream().map(QuickReply::getReply).collect(Collectors.toList());
-
         FacebookReplyMessage replyMessage = FacebookModelFactory.replyMessage(message.getSender(), textReply, facebookQuickReplies);
+        eventBus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
+    }
+
+    public void sendReply(QuickReply... quickReplies) {
+        List<FacebookQuickReply> facebookQuickReplies = Stream.of(quickReplies).map(QuickReply::getReply).collect(Collectors.toList());
+
+        FacebookReplyMessage replyMessage = FacebookModelFactory.replyMessage(message.getSender(), facebookQuickReplies);
         eventBus.send(EventBusConstants.SEND_MESSAGE, GSON.toJson(replyMessage));
     }
 

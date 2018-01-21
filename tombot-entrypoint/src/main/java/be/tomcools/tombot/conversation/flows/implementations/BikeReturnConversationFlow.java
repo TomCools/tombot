@@ -3,6 +3,7 @@ package be.tomcools.tombot.conversation.flows.implementations;
 import be.tomcools.tombot.conversation.context.ConversationContext;
 import be.tomcools.tombot.conversation.flows.ConversationFlow;
 import be.tomcools.tombot.conversation.flows.HandleResult;
+import be.tomcools.tombot.conversation.replies.quickreplies.QuickReplies;
 import be.tomcools.tombot.conversation.replies.text.Answers;
 import be.tomcools.tombot.facebook.FacebookContext;
 import be.tomcools.tombot.model.facebook.messages.partials.Coordinates;
@@ -54,6 +55,9 @@ public class BikeReturnConversationFlow extends ConversationFlow {
                 VeloStation station = closestStationWithAvailableBikes.get();
                 fbContext.sendReply(Answers.closestLocationDropoff(station));
                 fbContext.sendLocation(station.getCleanName(), station.getCoordinates());
+
+                //Location should reactivate the same flow.
+                doDelayed(() -> fbContext.sendReply("Got what you wanted?", QuickReplies.thanks(), QuickReplies.flowActivation("Different location", flowActivation())), 1000);
             } else {
                 fbContext.sendReply("Damn yo! All nearby station are full.");
             }

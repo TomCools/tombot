@@ -6,19 +6,18 @@ import be.tomcools.tombot.conversation.replies.quickreplies.QuickReply;
 import be.tomcools.tombot.conversation.replies.quickreplies.payloads.FlowActivation;
 import be.tomcools.tombot.conversation.replies.text.Answers;
 import be.tomcools.tombot.facebook.FacebookContext;
-import be.tomcools.tombot.model.facebook.messages.outgoing.FacebookQuickReply;
 import be.tomcools.tombot.model.facebook.messages.partials.Coordinates;
-import be.tomcools.tombot.tools.JSON;
+import be.tomcools.tombot.tools.ActionFunctionalInterface;
+import io.vertx.core.Vertx;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-import static be.tomcools.tombot.conversation.replies.quickreplies.QuickReplies.LOCATION;
-
 public abstract class ConversationFlow {
 
+    private Vertx vertx = Vertx.vertx();
     private Instant timeStarted = Instant.now();
     private Instant timeStopped;
 
@@ -45,13 +44,11 @@ public abstract class ConversationFlow {
     }
 
     public QuickReply getFlowActivator() {
-        return new QuickReply() {
-            @Override
-            public FacebookQuickReply getReply() {
-                FlowActivation activation = FlowActivation.builder().flowName(getFlowName()).build();
-                return FacebookQuickReply.builder().title(getFlowActivatorMessage()).payload(JSON.toJson(activation)).content_type("text").build();
-            }
-        };
+        return QuickReplies.flowActivation(getFlowActivatorMessage(), flowActivation());
+    }
+
+    protected FlowActivation flowActivation() {
+        return FlowActivation.builder().flowName(getFlowName()).build();
     }
 
     protected void requestLocation(FacebookContext fbContext, ConversationContext conversationContext) {
@@ -65,7 +62,11 @@ public abstract class ConversationFlow {
             Coordinates coordinates = conversationContext.getLocation().getCoordinates();
             quickReplies.add(QuickReplies.previousLocation(coordinates));
         }
-        quickReplies.add(LOCATION);
+        quickReplies.add(QuickReplies.location());
         fbContext.sendReply(text, quickReplies);
+    }
+
+    protected void doDelayed(ActionFunctionalInterface handler, int miliseconds) {
+        vertx.setTimer(miliseconds, (i) -> handler.doSomething());
     }
 }

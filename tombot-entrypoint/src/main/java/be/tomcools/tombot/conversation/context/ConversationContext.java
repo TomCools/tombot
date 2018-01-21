@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Stack;
 
-import static be.tomcools.tombot.conversation.replies.quickreplies.QuickReplies.LOCATION;
 
 @Setter
 @Getter
@@ -78,7 +77,7 @@ public class ConversationContext {
             Coordinates coordinates = conversationContext.getLocation().getCoordinates();
             quickReplies.add(QuickReplies.previousLocation(coordinates));
         }
-        quickReplies.add(LOCATION);
+        quickReplies.add(QuickReplies.location());
         return quickReplies;
     }
 }
