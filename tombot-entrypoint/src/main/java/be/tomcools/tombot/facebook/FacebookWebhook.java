@@ -6,7 +6,6 @@ import be.tomcools.tombot.conversation.context.ConversationContextCache;
 import be.tomcools.tombot.model.facebook.messages.FacebookMessage;
 import be.tomcools.tombot.model.facebook.messages.FacebookMessageEntry;
 import be.tomcools.tombot.model.facebook.messages.FacebookMessageMessaging;
-import be.tomcools.tombot.model.facebook.messages.partials.SenderAction;
 import be.tomcools.tombot.model.facebook.settings.SettingConstants;
 import be.tomcools.tombot.tools.JSON;
 import io.vertx.core.eventbus.EventBus;
@@ -50,10 +49,8 @@ public class FacebookWebhook {
 
     private void handleFacebookMessageMessaging(FacebookMessageMessaging entryMessage) {
         FacebookContext context = new FacebookContext(eventbus, entryMessage);
-
         if (context.isMessage()) {
             LOG.info("Got Message from Facebook: " + context.getMessageText());
-            context.senderAction(SenderAction.TYPING_ON);
             handleFacebookMessage(context);
         } else if (context.isDelivery()) {
             LOG.info("Message delivery confirmation");

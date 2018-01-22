@@ -52,6 +52,8 @@ public class FacebookMessageHandler {
                     fbContext.sendReply(Answers.answerGreeting() + "How can I help you today?", allFlowOptions());
                 } else if (msg.isThanks()) {
                     fbContext.sendReply("You are welcome " + Emoticons.BIKE_DRIVING);
+                } else {
+                    fbContext.sendReply("So... what you wanna do?", allFlowOptions());
                 }
             }
         }

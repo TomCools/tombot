@@ -77,8 +77,7 @@ public class VeloData extends AbstractVerticle {
         });
     }
 
-    public static void
-    getVeloAnalytics(Consumer<String> handling) {
+    public static void getVeloAnalytics(Consumer<String> handling) {
         VeloData.getData().setHandler(handler -> {
             if (handler.succeeded()) {
                 List<VeloStation> stations = handler.result();
@@ -93,13 +92,8 @@ public class VeloData extends AbstractVerticle {
                         .filter(veloStation -> veloStation.getAvailableBikes() == 0)
                         .count();
 
-                String veloAnalytics = new StringBuilder().append("There are a total of ").append(stations.size()).append(" stations in Antwerp.").append(System.lineSeparator())
-                        .append(openStations).append(" of those stations are open, ").append(stations.size() - openStations).append(" are closed.").append(System.lineSeparator())
-                        .append("A total of ").append(amountOfBikes).append(" bikes are available at stations").append(System.lineSeparator())
-                        .append("Even tho Velo does it's best, there are ").append(openStationsWith0Bikes).append(" stations without bikes. :-(")
-                        .toString();
+                String veloAnalytics = new StringBuilder().append("There are a total of ").append(stations.size()).append(" stations in Antwerp.").append(System.lineSeparator()).append(openStations).append(" of those stations are open, ").append(stations.size() - openStations).append(" are closed.").append(System.lineSeparator()).append("A total of ").append(amountOfBikes).append(" bikes are available at stations").append(System.lineSeparator()).append("Even tho Velo does it's best, there are ").append(openStationsWith0Bikes).append(" stations without bikes. :-(").toString();
                 handling.accept(veloAnalytics);
-
             }
         });
     }
