@@ -1,6 +1,7 @@
 package be.tomcools.tombot.facebook;
 
 import be.tomcools.tombot.EventBusConstants;
+import be.tomcools.tombot.model.facebook.messages.outgoing.FacebookReplyMessage;
 import be.tomcools.tombot.model.facebook.settings.Greeting;
 import be.tomcools.tombot.model.facebook.settings.Payload;
 import be.tomcools.tombot.model.facebook.settings.SettingConstants;
@@ -71,10 +72,19 @@ public class MessengerConnector extends AbstractVerticle {
 
     public void handleMessage(Message<String> tMessage) {
         String body = tMessage.body();
-        client.post(messagesEndpoint, response -> {
-            LOG.info("Received response with status code " + response.statusCode());
-            response.bodyHandler(b -> LOG.debug("Received response with status code " + b.toString()));
-        }).putHeader("content-type", "application/json").end(body);
+        FacebookReplyMessage message = JSON.fromJson(body, FacebookReplyMessage.class);
+        sendMessage(message);
+    }
+
+    private void sendMessage(FacebookReplyMessage message) {
+        vertx.executeBlocking(future  -> {
+            client.post(messagesEndpoint, response -> {
+                LOG.info("Received response with status code " + response.statusCode());
+                response.bodyHandler(b -> LOG.debug("Received response with status code " + b.toString()));
+                future.complete();
+            }).putHeader("content-type", "application/json").end(JSON.toJson(message));
+        },asyncResult -> {});
+
     }
 
     private void changeSettings() {
