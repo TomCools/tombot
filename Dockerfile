@@ -1,4 +1,4 @@
-FROM java:8-alpine
+FROM openjdk:8-jre-alpine
 
 ENV FACEBOOK_TOKEN=DUMMY
 ENV WIT_TOKEN=DUMMY
