@@ -91,7 +91,7 @@ public class MessengerConnector extends AbstractVerticle {
         Settings settings = Settings.builder()
                 .greeting(Greeting.builder()
                         .locale("default")
-                        .text("Hi {{user_first_name}}, I am Avelo! I can help you find a bike and point you to stations for the Antwerp Velo service. Avelo is not affiliated with the official Velo Antwerp Company. Hosted and Maintained by Tom Cools (http://tomcools.be).")
+                        .text("Hi {{user_first_name}}, I am Avelo! I can help you find a bike and point you to stations for the Antwerp Velo service. Created by http://tomcools.be.")
                         .build())
                 .gettingStartedPayload(Payload.builder().payload(SettingConstants.GET_STARTED).build())
                 .build();
