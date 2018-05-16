@@ -78,7 +78,7 @@ public class FacebookMessageHandler {
             if (flowHandleResult.hasBackupAction()) {
                 flowHandleResult.getBackupAction().doIt();
             } else {
-                fbContext.sendReply("No idea what to say to this...");
+                fbContext.sendReply("No idea what to say to this....");
             }
         }
     }
