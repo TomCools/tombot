@@ -27,35 +27,41 @@ public class FacebookMessageHandler {
 
     public void handle() {
         FacebookIncommingMessageContent msg = fbContext.getMessage();
-
         appendConversationDetails(msg);
-
         if (conversationContext.hasActiveFlow()) {
-            if (msg.hasQuickReply() && msg.getQuick_reply().isFlowActivationMessage()) {
-                //Request confirmation --> should be confirmation
-                switchFlowAndContinue(msg);
-            } else if (msg.hasQuickReply() && msg.getQuick_reply().isFlowSwitchConfirmation()) {
-                //Got confirmation, so switch and continue with new flow.
-                switchFlowAndContinue(msg);
-            } else {
-                // NORMAL FLOW
-                ConversationFlow flow = conversationContext.getActiveFlow();
-                tryExecuteFlow(flow);
-            }
+            this.handleActiveFlow(msg);
         } else {
-            if (msg.hasQuickReply() && msg.getQuick_reply().isFlowActivationMessage()) {
-                //Activate flow and ask next details
-                switchFlowAndContinue(msg);
+            this.handleNewConversation(msg);
+        }
+    }
+
+    private void handleNewConversation(FacebookIncommingMessageContent msg) {
+        if (msg.hasQuickReply() && msg.getQuick_reply().isFlowActivationMessage()) {
+            //Activate flow and ask next details
+            switchFlowAndContinue(msg);
+        } else {
+            //Try NLP to determine correct flow or else
+            if (msg.isGreeting()) {
+                fbContext.sendReply(Answers.answerGreeting() + "How can I help you today?", allFlowOptions());
+            } else if (msg.isThanks()) {
+                fbContext.sendReply("You are welcome " + Emoticons.BIKE_DRIVING);
             } else {
-                //Try NLP to determine correct flow or else
-                if (msg.isGreeting()) {
-                    fbContext.sendReply(Answers.answerGreeting() + "How can I help you today?", allFlowOptions());
-                } else if (msg.isThanks()) {
-                    fbContext.sendReply("You are welcome " + Emoticons.BIKE_DRIVING);
-                } else {
-                    fbContext.sendReply("So... what you wanna do?", allFlowOptions());
-                }
+                fbContext.sendReply("So... what you wanna do?", allFlowOptions());
             }
+        }
+    }
+
+    private void handleActiveFlow(FacebookIncommingMessageContent msg) {
+        if (msg.hasQuickReply() && msg.getQuick_reply().isFlowActivationMessage()) {
+            //Request confirmation --> should be confirmation
+            switchFlowAndContinue(msg);
+        } else if (msg.hasQuickReply() && msg.getQuick_reply().isFlowSwitchConfirmation()) {
+            //Got confirmation, so switch and continue with new flow.
+            switchFlowAndContinue(msg);
+        } else {
+            // NORMAL FLOW
+            ConversationFlow flow = conversationContext.getActiveFlow();
+            tryExecuteFlow(flow);
         }
     }
 
