@@ -15,7 +15,7 @@ public class HttpVerticle extends AbstractVerticle {
     public void start() throws Exception {
         Router router = Router.router(vertx);
         router.exceptionHandler(throwable -> LOG.error(throwable.getCause() + ":" + throwable.getMessage()));
-        router.route("/webhook").handler(FacebookWebhook.builder().eventbus(vertx.eventBus()).build()::webhookRequestHandler);
+        router.route("/webhook").handler(new FacebookWebhook(vertx.eventBus())::webhookRequestHandler);
 
         Instant startupTime = Instant.now();
         router.route("/*").handler(r -> {

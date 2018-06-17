@@ -5,6 +5,7 @@ import be.tomcools.tombot.model.facebook.messages.FacebookMessageEntry;
 import be.tomcools.tombot.model.facebook.messages.FacebookMessageMessaging;
 import be.tomcools.tombot.model.facebook.settings.SettingConstants;
 import be.tomcools.tombot.models.core.EventBusConstants;
+import be.tomcools.tombot.models.core.EventBusWrapper;
 import com.google.gson.Gson;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
@@ -13,10 +14,13 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.RoutingContext;
 import lombok.Builder;
 
-@Builder
 public class FacebookWebhook {
     private static final Logger LOG = LoggerFactory.getLogger(FacebookWebhook.class);
-    private EventBus eventbus;
+    private EventBusWrapper eventbus;
+
+    public FacebookWebhook(EventBus eventbus) {
+        this.eventbus = new EventBusWrapper(eventbus);
+    }
 
     public void webhookRequestHandler(RoutingContext route) {
         FacebookRequest request = new FacebookRequest(route.request());
@@ -48,13 +52,13 @@ public class FacebookWebhook {
     private void handleFacebookMessageMessaging(FacebookMessageMessaging entryMessage) {
         if (entryMessage.isMessage()) {
             LOG.info("Got Message from Facebook: " + entryMessage.getMessage().getText());
-            eventbus.send(EventBusConstants.PROCESS_MSG, entryMessage);
+            eventbus.receivedMsg(entryMessage);
         } else if (entryMessage.isDelivery()) {
             LOG.info("Message delivery confirmation");
         } else if (entryMessage.isPostback()) {
             LOG.info("Got POSTBACK");
             if (SettingConstants.GET_STARTED.equalsIgnoreCase(entryMessage.getPostback().getPayload())) {
-                eventbus.send(EventBusConstants.GET_STARTED, entryMessage.getSender().getId());
+                eventbus.receivedGettingStarted(entryMessage.getSender());
             } else {
                 LOG.info("Oh look, a postback" + entryMessage.getPostback().getPayload());
             }

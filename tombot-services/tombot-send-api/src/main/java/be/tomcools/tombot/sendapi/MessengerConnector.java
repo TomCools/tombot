@@ -6,6 +6,7 @@ import be.tomcools.tombot.model.facebook.settings.Payload;
 import be.tomcools.tombot.model.facebook.settings.SettingConstants;
 import be.tomcools.tombot.model.facebook.settings.Settings;
 import be.tomcools.tombot.models.core.EventBusConstants;
+import be.tomcools.tombot.models.core.EventBusWrapper;
 import be.tomcools.tombot.models.core.JSON;
 import com.google.gson.JsonObject;
 import io.vertx.core.AbstractVerticle;
@@ -45,7 +46,7 @@ public class MessengerConnector extends AbstractVerticle {
                 .setDefaultHost("graph.facebook.com");
         client = vertx.createHttpClient(options);
 
-        vertx.eventBus().consumer(EventBusConstants.SEND_MESSAGE, this::handleMessage);
+        new EventBusWrapper(vertx.eventBus()).handleSendMessage(this::sendMessage);
         vertx.eventBus().consumer(EventBusConstants.PROFILE_DETAILS_FACEBOOK, this::handleProfileDetails);
 
         changeSettings();
@@ -68,12 +69,6 @@ public class MessengerConnector extends AbstractVerticle {
             token = environmentProps.get("FACEBOOK_TOKEN");
         }
         return token;
-    }
-
-    public void handleMessage(Message<String> tMessage) {
-        String body = tMessage.body();
-        FacebookReplyMessage message = JSON.fromJson(body, FacebookReplyMessage.class);
-        sendMessage(message);
     }
 
     private void sendMessage(FacebookReplyMessage message) {
