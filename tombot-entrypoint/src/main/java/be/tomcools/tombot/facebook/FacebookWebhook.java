@@ -1,13 +1,11 @@
 package be.tomcools.tombot.facebook;
 
-import be.tomcools.tombot.conversation.FacebookMessageHandler;
-import be.tomcools.tombot.conversation.context.ConversationContext;
-import be.tomcools.tombot.conversation.context.ConversationContextCache;
 import be.tomcools.tombot.model.facebook.messages.FacebookMessage;
 import be.tomcools.tombot.model.facebook.messages.FacebookMessageEntry;
 import be.tomcools.tombot.model.facebook.messages.FacebookMessageMessaging;
 import be.tomcools.tombot.model.facebook.settings.SettingConstants;
-import be.tomcools.tombot.tools.JSON;
+import be.tomcools.tombot.models.core.EventBusConstants;
+import com.google.gson.Gson;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -29,7 +27,7 @@ public class FacebookWebhook {
             request.handleBody(b -> {
                 LOG.info("Got Request from Facebook: " + b.toString());
                 JsonObject jsonObject = b.toJsonObject();
-                FacebookMessage message = JSON.fromJson(jsonObject.toString(), FacebookMessage.class);
+                FacebookMessage message = new Gson().fromJson(jsonObject.toString(), FacebookMessage.class);
                 handleMessage(message);
             });
         }
@@ -48,34 +46,20 @@ public class FacebookWebhook {
     }
 
     private void handleFacebookMessageMessaging(FacebookMessageMessaging entryMessage) {
-        FacebookContext context = new FacebookContext(eventbus, entryMessage);
-        if (context.isMessage()) {
-            LOG.info("Got Message from Facebook: " + context.getMessageText());
-            handleFacebookMessage(context);
-        } else if (context.isDelivery()) {
+        if (entryMessage.isMessage()) {
+            LOG.info("Got Message from Facebook: " + entryMessage.getMessage().getText());
+            eventbus.send(EventBusConstants.PROCESS_MSG, entryMessage);
+        } else if (entryMessage.isDelivery()) {
             LOG.info("Message delivery confirmation");
-        } else if (context.isPostback()) {
+        } else if (entryMessage.isPostback()) {
             LOG.info("Got POSTBACK");
             if (SettingConstants.GET_STARTED.equalsIgnoreCase(entryMessage.getPostback().getPayload())) {
-                handleGettingStarted(context);
+                eventbus.send(EventBusConstants.GET_STARTED, entryMessage.getSender().getId());
             } else {
-                context.sendReply("Oh look, a postback" + entryMessage.getPostback().getPayload());
+                LOG.info("Oh look, a postback" + entryMessage.getPostback().getPayload());
             }
-        } else if (context.isReadConfirmation()) {
+        } else if (entryMessage.isReadConfirmation()) {
             LOG.info("Got Read Confirmation");
         }
-    }
-
-    private void handleGettingStarted(FacebookContext context) {
-        context.sendReply("Hi! I am Avelo. I can help you find a bike station for Velo Antwerp!");
-    }
-
-    private void handleFacebookMessage(FacebookContext facebookContext) {
-        ConversationContext conversationContext = ConversationContextCache.getConversation(facebookContext.getSender().getId());
-        this.handleConversation(facebookContext, conversationContext);
-    }
-
-    private void handleConversation(FacebookContext fbContext, ConversationContext conversationContext) {
-        new FacebookMessageHandler(fbContext, conversationContext).handle();
     }
 }

@@ -10,7 +10,9 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>tombot-models</module>
+        <module>tombot-services</module>
         <module>tombot-entrypoint</module>
+        <module>tombot-conversation</module>
     </modules>
 
     <dependencyManagement>
