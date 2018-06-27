@@ -3,7 +3,12 @@ package be.tomcools.tombot.conversation;
 import be.tomcools.tombot.model.facebook.messages.FacebookMessageMessaging;
 import be.tomcools.tombot.model.facebook.messages.partials.FacebookIdentifier;
 import be.tomcools.tombot.models.core.EventBusWrapper;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.AbstractVerticle;
+
+import java.io.File;
+import java.util.stream.Stream;
 
 public class ConversationVerticle extends AbstractVerticle {
 
@@ -12,6 +17,10 @@ public class ConversationVerticle extends AbstractVerticle {
     @Override
     public void start() throws Exception {
         super.start();
+
+        ObjectMapper mapper = new ObjectMapper(new JsonFactory());
+        ConversationVerticle result = mapper.readValue(new File(""), this.getClass());
+
 
         bus = new EventBusWrapper(vertx.eventBus());
 

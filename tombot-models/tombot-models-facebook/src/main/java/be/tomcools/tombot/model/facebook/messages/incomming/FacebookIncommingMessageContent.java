@@ -5,12 +5,13 @@ import be.tomcools.tombot.model.facebook.messages.attachement.FacebookMessageAtt
 import be.tomcools.tombot.model.facebook.messages.incomming.nlp.FacebookNlp;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
-@Data
 @Setter
+@Getter
 public class FacebookIncommingMessageContent extends FacebookMessageContent {
     //Retrieving message
     private List<FacebookMessageAttachment> attachments;

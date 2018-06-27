@@ -4,10 +4,11 @@ import be.tomcools.tombot.model.facebook.messages.FacebookMessageContent;
 import be.tomcools.tombot.model.facebook.messages.attachement.FacebookMessageAttachment;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 
-@Data
+@Getter
 public class FacebookOutgoingMessageContent extends FacebookMessageContent {
     //sending message
     private FacebookMessageAttachment attachment;
