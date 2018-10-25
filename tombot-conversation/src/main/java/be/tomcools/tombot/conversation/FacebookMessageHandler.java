@@ -11,12 +11,13 @@ import be.tomcools.tombot.model.facebook.messages.incomming.FacebookIncommingMes
 import be.tomcools.tombot.model.facebook.messages.partials.Coordinates;
 import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
+@Builder
 public class FacebookMessageHandler {
 
     private FacebookContext fbContext;

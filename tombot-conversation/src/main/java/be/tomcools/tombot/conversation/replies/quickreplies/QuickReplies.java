@@ -22,11 +22,11 @@ public class QuickReplies {
     }
 
     public static QuickReply location(String name, String payload) {
-        return () -> FacebookQuickReply.builder().title(name).payload(payload).content_type("location").build();
+        return FacebookQuickReply.builder().title(name).payload(payload).content_type("location")::build;
     }
 
     public static QuickReply flowActivation(String text, FlowActivation flowActivation) {
-        return () -> FacebookQuickReply.builder().title(text).payload(new Gson().toJson(flowActivation)).content_type("text").build();
+        return FacebookQuickReply.builder().title(text).payload(new Gson().toJson(flowActivation)).content_type("text")::build;
     }
 
     public static QuickReply previousLocation(Coordinates coordinates) {
@@ -38,15 +38,10 @@ public class QuickReplies {
     }
 
     public static QuickReply thanks() {
-        return new QuickReply() {
-            @Override
-            public FacebookQuickReply getReply() {
-                return FacebookQuickReply.builder()
-                        .title("Thanks!")
-                        .content_type("text")
-                        .payload("THANKS")
-                        .build();
-            }
-        };
+        return () -> FacebookQuickReply.builder()
+                .title("Thanks!")
+                .content_type("text")
+                .payload("THANKS")
+                .build();
     }
 }
